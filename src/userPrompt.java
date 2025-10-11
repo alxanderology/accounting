@@ -61,7 +61,6 @@ public class userPrompt extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Montserrat ExtraBold", 1, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 51, 51));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\julie\\Downloads\\user (1).png")); // NOI18N
         jLabel3.setText("User");
         jLabel3.setIconTextGap(18);
         jPanel2.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 160, 570, 90));

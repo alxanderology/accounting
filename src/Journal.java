@@ -81,7 +81,6 @@ public class Journal extends javax.swing.JFrame {
         jLabel3.setFont(new java.awt.Font("Montserrat ExtraBold", 1, 36)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(51, 51, 51));
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setIcon(new javax.swing.ImageIcon("C:\\Users\\julie\\Downloads\\user (1).png")); // NOI18N
         jLabel3.setText("User's Journal");
         jLabel3.setIconTextGap(18);
         jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 0, 570, 90));
