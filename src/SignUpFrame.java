@@ -191,10 +191,10 @@ public class SignUpFrame extends javax.swing.JFrame {
             + "Business Organization: " + busOrg + "\n"
             + "Accounting Period: " + accPeriod + "\n");
             
-            MainMenu menu = new MainMenu();
-            menu.setVisible(true);
-            
+            MainMenu menu = new MainMenu(entityName, busOrg, accPeriod);
             this.dispose();
+            menu.setVisible(true);          
+            
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed
