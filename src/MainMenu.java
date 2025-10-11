@@ -269,8 +269,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        Journal journal = new Journal(this.entityName);
-        journal.setVisible(true);
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
      
