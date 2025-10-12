@@ -9,16 +9,15 @@
  */
 public class UnadjustedTB extends javax.swing.JFrame {
     
-    private String entityName;
+    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UnadjustedTB.class.getName());
 
     /**
      * Creates new form UnadjustedTB
      */
-    public UnadjustedTB(String en) {
+    public UnadjustedTB() {
         initComponents();
-        this.entityName = en;
-        jTextField1.setText(en);
+        
     }
 
     /**

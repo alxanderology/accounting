@@ -15,6 +15,7 @@ public class SignUpFrame extends javax.swing.JFrame {
     private String entityName;
     private String busOrg;
     private String accPeriod;
+    private boolean signUpError = false;
    
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(SignUpFrame.class.getName());
     
@@ -41,9 +42,9 @@ public class SignUpFrame extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
+        jComboBox1 = new javax.swing.JComboBox<>();
+        jComboBox2 = new javax.swing.JComboBox<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBackground(new java.awt.Color(232, 223, 202));
@@ -54,22 +55,22 @@ public class SignUpFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Montserrat ExtraBold", 0, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(109, 148, 197));
         jLabel1.setText("Welcome to iAccounts!");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 82, 624, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 50, 624, -1));
 
         jLabel2.setFont(new java.awt.Font("Montserrat Medium", 0, 14)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(109, 148, 197));
         jLabel2.setText("Entitiy Name");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 144, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 120, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Montserrat Medium", 0, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(109, 148, 197));
         jLabel3.setText("Business Organization (Merchandising/Manufacturing/Service)");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 229, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 210, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Montserrat Medium", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(109, 148, 197));
         jLabel4.setText("Accounting Period (Calendar/Fiscal)");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 320, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 300, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Montserrat Medium", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(109, 148, 197));
@@ -80,21 +81,7 @@ public class SignUpFrame extends javax.swing.JFrame {
                 jTextField1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 169, 454, 42));
-
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField2, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 260, 398, 42));
-
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
-            }
-        });
-        jPanel1.add(jTextField3, new org.netbeans.lib.awtextra.AbsoluteConstraints(163, 345, 398, 42));
+        jPanel1.add(jTextField1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 150, 454, 42));
 
         jButton1.setBackground(new java.awt.Color(109, 148, 197));
         jButton1.setFont(new java.awt.Font("Montserrat ExtraBold", 0, 18)); // NOI18N
@@ -105,7 +92,27 @@ public class SignUpFrame extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(304, 450, 162, 35));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 390, 162, 35));
+
+        jComboBox1.setFont(new java.awt.Font("Montserrat SemiBold", 0, 18)); // NOI18N
+        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Merchandising", "Manufacturing", "Service" }));
+        jComboBox1.setSelectedIndex(-1);
+        jComboBox1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox1ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jComboBox1, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 240, 450, 40));
+
+        jComboBox2.setFont(new java.awt.Font("Montserrat SemiBold", 0, 18)); // NOI18N
+        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Calendar (Jan 1 - Dec 31)", "Fiscal (Custom 12-mo. Period)" }));
+        jComboBox2.setSelectedIndex(-1);
+        jComboBox2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jComboBox2ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jComboBox2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 330, 450, 40));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -125,30 +132,14 @@ public class SignUpFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField1ActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
-
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         entityName = jTextField1.getText();
-        busOrg = jTextField2.getText();        
-        accPeriod = jTextField3.getText();
-        boolean signUpError = false;
-        if (!(busOrg.equals("Merchandising") || busOrg.equals("Manufacturing") || busOrg.equals("Service"))){
-            JOptionPane.showMessageDialog(null, "Please enter valid business organization.");
+        busOrg = jComboBox1.getSelectedItem().toString();        
+        accPeriod = jComboBox2.getSelectedItem().toString();
+        if (entityName.isEmpty()){
+            JOptionPane.showMessageDialog(null, "Please enter valid name of a company or organization.");
             signUpError = true;
-        }
-        if (!(accPeriod.equals("Calendar") || accPeriod.equals("Fiscal"))){
-            JOptionPane.showMessageDialog(null, "Please enter valid accounting period.");
-            signUpError = true;
-        }
-        if (signUpError){
-            
-        }
+        }        
         else{
             JOptionPane.showMessageDialog(null, "Entity: " + entityName + "\n"
             + "Business Organization: " + busOrg + "\n"
@@ -161,6 +152,14 @@ public class SignUpFrame extends javax.swing.JFrame {
         }
         
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jComboBox1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox1ActionPerformed
+
+    private void jComboBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jComboBox2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jComboBox2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -189,6 +188,8 @@ public class SignUpFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JComboBox<String> jComboBox1;
+    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -196,7 +197,5 @@ public class SignUpFrame extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
 }

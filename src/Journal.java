@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author julie
@@ -12,8 +12,15 @@ public class Journal extends javax.swing.JFrame {
     /**
      * Creates new form Journal
      */
-    public Journal() {
+    private DefaultTableModel journ;
+    
+    private String entityName;
+    
+    public Journal(String en) {
         initComponents();
+        journ = (DefaultTableModel) jTable2.getModel();
+        this.entityName = en;
+        jLabel3.setText(en);
     }
 
     /**
@@ -32,8 +39,8 @@ public class Journal extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        jTable2 = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -47,7 +54,7 @@ public class Journal extends javax.swing.JFrame {
         jLabel1.setText("GENERAL JOURNAL");
         jPanel2.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(430, 50, 580, 80));
 
-        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 1330, 150));
+        getContentPane().add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, -10, 1480, 150));
 
         jPanel4.setBackground(new java.awt.Color(203, 220, 235));
 
@@ -55,14 +62,14 @@ public class Journal extends javax.swing.JFrame {
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 1340, Short.MAX_VALUE)
+            .addGap(0, 1480, Short.MAX_VALUE)
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 30, Short.MAX_VALUE)
         );
 
-        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, -1, 30));
+        getContentPane().add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 140, 1480, 30));
 
         jPanel1.setBackground(new java.awt.Color(244, 237, 230));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -81,28 +88,45 @@ public class Journal extends javax.swing.JFrame {
         jLabel4.setFont(new java.awt.Font("Neue Kaine", 0, 24)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(51, 51, 51));
         jLabel4.setText("For the year ended x");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(640, 50, 310, 60));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 50, 310, 60));
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        jTable2.setFont(new java.awt.Font("Montserrat Medium", 0, 18)); // NOI18N
+        jTable2.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Date", "Account Titles", "Debit", "Credit"
+                "PARTICULARS", "DEBIT", "CREDIT"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane2.setViewportView(jTable2);
 
-        jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 140, 1160, -1));
+        jPanel1.add(jScrollPane2, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 110, 1140, -1));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 172, 1330, 580));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 172, 1470, 580));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
+    
+    public void recTransaction(String debit, String credit, String amt){
+        Object[] debitRow = {
+            debit,
+            amt,
+            ""
+        };
+        journ.addRow(debitRow);
+        
+        Object[] creditRow = {
+            "   " + credit,
+            "",
+            amt
+        };
+        journ.addRow(creditRow);
+        
+        Object[] spaceLangSiya = {};
+        journ.addRow(spaceLangSiya);
+        
+    }
     /**
      * @param args the command line arguments
      */
@@ -131,9 +155,7 @@ public class Journal extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> {
-            new Journal().setVisible(true);
-        });
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -144,7 +166,7 @@ public class Journal extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable jTable2;
     // End of variables declaration//GEN-END:variables
 }
