@@ -100,8 +100,10 @@ public class BESTFIT extends javax.swing.JFrame {
         txtTJobSize = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtTBlockSize = new javax.swing.JTextField();
-        btnClear = new javax.swing.JButton();
+        btnClearMemory = new javax.swing.JButton();
         jButton2 = new javax.swing.JButton();
+        btnClearJob = new javax.swing.JButton();
+        btnClear = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -204,10 +206,10 @@ public class BESTFIT extends javax.swing.JFrame {
             }
         });
 
-        btnClear.setText("Clear");
-        btnClear.addActionListener(new java.awt.event.ActionListener() {
+        btnClearMemory.setText("Clear");
+        btnClearMemory.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearActionPerformed(evt);
+                btnClearMemoryActionPerformed(evt);
             }
         });
 
@@ -215,6 +217,20 @@ public class BESTFIT extends javax.swing.JFrame {
         jButton2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton2ActionPerformed(evt);
+            }
+        });
+
+        btnClearJob.setText("Clear");
+        btnClearJob.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearJobActionPerformed(evt);
+            }
+        });
+
+        btnClear.setText("Clear All");
+        btnClear.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnClearActionPerformed(evt);
             }
         });
 
@@ -231,16 +247,18 @@ public class BESTFIT extends javax.swing.JFrame {
                 .addGap(352, 352, 352))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(118, 118, 118)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtJobNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                            .addComponent(txtMemoryRequested)))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(txtJobNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
+                                .addComponent(txtMemoryRequested)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(btnClearJob))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(69, 69, 69)
@@ -253,9 +271,10 @@ public class BESTFIT extends javax.swing.JFrame {
                             .addComponent(txtBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(btnClear)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jButton2)
-                                .addContainerGap())))
+                                .addContainerGap())
+                            .addComponent(btnClearMemory)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(54, 54, 54)
                         .addComponent(jLabel7)
@@ -311,7 +330,11 @@ public class BESTFIT extends javax.swing.JFrame {
                         .addComponent(txtMemoryRequested, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(jLabel4)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnClearMemory)
+                    .addComponent(btnClearJob))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnAddJob)
                     .addComponent(btnAddBlock))
@@ -319,8 +342,8 @@ public class BESTFIT extends javax.swing.JFrame {
                 .addComponent(btnCalculate)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClear)
-                    .addComponent(jButton2))
+                    .addComponent(jButton2)
+                    .addComponent(btnClear))
                 .addGap(16, 16, 16))
         );
 
@@ -394,6 +417,31 @@ public class BESTFIT extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_txtTBlockSizeActionPerformed
 
+    private void btnClearMemoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearMemoryActionPerformed
+        // TODO add your handling code here:
+        
+        DefaultTableModel memoryTable = (DefaultTableModel) MemoryTable.getModel();
+        for(int i = 0; i < memoryTable.getRowCount(); i++){
+            memoryTable.setValueAt("", i, 2);  
+            memoryTable.setValueAt("", i, 3);  
+            memoryTable.setValueAt("Free", i, 4); 
+            memoryTable.setValueAt("", i, 5);  
+        }
+        txtTBlockSize.setText("");
+        txtTJobSize.setText("");
+    }//GEN-LAST:event_btnClearMemoryActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        // TODO add your handling code here:
+        this.dispose();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void btnClearJobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearJobActionPerformed
+        // TODO add your handling code here:
+        DefaultTableModel jobTable = (DefaultTableModel) JobTable.getModel();
+        jobTable.setRowCount(0);
+    }//GEN-LAST:event_btnClearJobActionPerformed
+
     private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
         // TODO add your handling code here:
         DefaultTableModel jobTable = (DefaultTableModel) JobTable.getModel();
@@ -404,11 +452,6 @@ public class BESTFIT extends javax.swing.JFrame {
         txtTBlockSize.setText("");
         txtTJobSize.setText("");
     }//GEN-LAST:event_btnClearActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -442,6 +485,8 @@ public class BESTFIT extends javax.swing.JFrame {
     private javax.swing.JButton btnAddJob;
     private javax.swing.JButton btnCalculate;
     private javax.swing.JButton btnClear;
+    private javax.swing.JButton btnClearJob;
+    private javax.swing.JButton btnClearMemory;
     private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
