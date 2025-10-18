@@ -1,9 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package memoryallocation;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -16,26 +10,28 @@ import java.util.List;
  * @author Wes
  */
 public class FirstFitVisualizer extends javax.swing.JFrame {
+
+    int jobNum = 0;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(FirstFitVisualizer.class.getName());
-
+    
     // ----- Data Structures -----
     static class Job {
-        String jobNumber;
+        int jobNumber;
         int jobSize;
         boolean allocated = false;
 
-        public Job(String jobNumber, int jobSize) {
+        public Job(int jobNumber, int jobSize) {
             this.jobNumber = jobNumber;
             this.jobSize = jobSize;
         }
     }
     
-    static class MemoryBlock {
+    class MemoryBlock {
         int location;
         int size;
         boolean isFree = true;
-        String jobNumber = "";
+        int jobNumber = 0;
         int jobSize = 0;
         int internalFragmentation = 0;
 
@@ -43,14 +39,30 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
             this.location = location;
             this.size = size;
         }
+        
+        public MemoryBlock() {
+            //TODO Auto-generated constructor stub
+        }
 
-        public void reset() {
+        public void resetAll() {
             isFree = true;
-            jobNumber = "";
+            jobNumber = 0;
             jobSize = 0;
             internalFragmentation = 0;
         }
-    }
+        public void resetJob() {
+            DefaultTableModel jTable = (DefaultTableModel) jobTable.getModel();
+            jobs.clear();
+            jTable.setRowCount(0);
+            jobNum = 0;
+            
+        }
+        public void resetMem() {
+            DefaultTableModel jTable = (DefaultTableModel) memoryTable.getModel();
+            jTable.setRowCount(0);
+            blocks.clear();
+        }
+    }   
 
     
         // ----- Instance Variables -----
@@ -58,7 +70,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
     private final List<MemoryBlock> blocks = new ArrayList<>();
     private final List<Job> jobs = new ArrayList<>();
         
-    
+   
      // --- Instance variables for memory management ---;
     private DefaultTableModel memoryTableModel, jobTableModel;
     private JTextField blockLocationInput, blockSizeInput;
@@ -67,12 +79,12 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
     /**
      * Creates new form FirstFitVisualizer
      */
-      public FirstFitVisualizer() {
+    public FirstFitVisualizer() {
         setTitle("First Fit Memory Manager");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1400, 720);
         setLocationRelativeTo(null);
-
+        
         // Layout
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -84,7 +96,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         titleLabel.setPreferredSize(new Dimension(1000, 60));
         titleLabel.setBackground(new Color(25, 24, 37));
         mainPanel.add(titleLabel, BorderLayout.NORTH);
-        
+
 
         JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 0));
 
@@ -96,17 +108,17 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         jobPanel.add(new JScrollPane(jobTable), BorderLayout.CENTER);
 
         JPanel jobInputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-        jobNumberInput = new JTextField();
         jobSizeInput = new JTextField();
         addJobButton = new JButton("Add Job");
-        jobInputPanel.add(new JLabel("Job Number:"));
-        jobInputPanel.add(jobNumberInput);
+        ResetJobButton = new JButton("Reset Jobs");
         jobInputPanel.add(new JLabel("Memory Requested (K):"));
         jobInputPanel.add(jobSizeInput);
         jobInputPanel.add(new JLabel(""));
         jobInputPanel.add(addJobButton);
+        jobInputPanel.add(new JLabel(""));
+        jobInputPanel.add(ResetJobButton);
         jobPanel.add(jobInputPanel, BorderLayout.SOUTH);
-
+        
         // ----- MEMORY PANEL -----
         JPanel memoryPanel = new JPanel(new BorderLayout());
         memoryPanel.setBorder(BorderFactory.createTitledBorder("Memory List"));
@@ -116,16 +128,19 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         memoryTable = new JTable(memoryTableModel);
         memoryPanel.add(new JScrollPane(memoryTable), BorderLayout.CENTER);
 
-        JPanel blockInputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        JPanel blockInputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
         blockLocationInput = new JTextField();
         blockSizeInput = new JTextField();
         addBlockButton = new JButton("Add Block");
+        resetMemoryButton = new JButton("Reset Memory Table");
         blockInputPanel.add(new JLabel("Memory Location:"));
         blockInputPanel.add(blockLocationInput);
         blockInputPanel.add(new JLabel("Block Size (K):"));
         blockInputPanel.add(blockSizeInput);
         blockInputPanel.add(new JLabel(""));
         blockInputPanel.add(addBlockButton);
+        blockInputPanel.add(new JLabel(""));
+        blockInputPanel.add(resetMemoryButton);
         memoryPanel.add(blockInputPanel, BorderLayout.SOUTH);
 
         centerPanel.add(jobPanel);
@@ -136,8 +151,11 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         // ----- CALCULATE BUTTON -----
         calculateButton = new JButton("Calculate Allocation");
         calculateButton.setFont(new Font("Montserrat", Font.BOLD, 16));
-        JPanel calcPanel = new JPanel();
-        calcPanel.add(calculateButton);
+        JPanel calcPanel = new JPanel(new BorderLayout());
+        JPanel btnPanel = new JPanel();
+
+        btnPanel.add(calculateButton);
+        calcPanel.add(btnPanel, BorderLayout.CENTER);
         mainPanel.add(calcPanel, BorderLayout.SOUTH);
         
         JPanel totalsPane1 = new JPanel(new GridLayout(1, 2, 10, 0));
@@ -145,7 +163,8 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         totalUsedLabel = new JLabel("Total Used Job Size: ");
         totalsPane1.add(totalAvailableLabel);
         totalsPane1.add(totalUsedLabel);
-        mainPanel.add(totalsPane1, BorderLayout.NORTH);
+        calcPanel.add(totalsPane1, BorderLayout.SOUTH);
+        
         
         
         
@@ -155,10 +174,15 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         // ----- ACTIONS -----
         addBlockButton.addActionListener(e -> addBlock());
         addJobButton.addActionListener(e -> addJob());
+        MemoryBlock mBlock = new MemoryBlock();
+        ResetJobButton.addActionListener(e -> mBlock.resetJob());
+        resetMemoryButton.addActionListener(e -> mBlock.resetMem());
         calculateButton.addActionListener(e -> calculateAllocation());
     }
-     
+    
         // ----- Add Job and Allocate -----
+
+    
     private void addBlock() {
         String locStr = blockLocationInput.getText().trim();
         String sizeStr = blockSizeInput.getText().trim();
@@ -178,17 +202,21 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         }
     }
     private void addJob() {
-        String jobNum = jobNumberInput.getText().trim();
         String jobSizeStr = jobSizeInput.getText().trim();
-        if (jobNum.isEmpty() || jobSizeStr.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Enter both job number and memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
+        if (jobSizeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
         try {
             int jobSize = Integer.parseInt(jobSizeStr) * 1000;
+        if(jobNum == 0){
+            jobNum = 1;
+        } else{
+            jobNum += 1;
+        }
             jobs.add(new Job(jobNum, jobSize));
             jobTableModel.addRow(new Object[]{jobNum, jobSizeStr + "K"});
-            jobNumberInput.setText("");
+
             jobSizeInput.setText("");
         } catch (NumberFormatException ex) {
             JOptionPane.showMessageDialog(this, "Enter a valid number for memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
@@ -196,7 +224,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
     }
     private void calculateAllocation() {
         // Reset all blocks and jobs
-        for (MemoryBlock block : blocks) block.reset();
+        for (MemoryBlock block : blocks) block.resetAll();
         for (Job job : jobs) job.allocated = false;
 
         // First Fit for each job
@@ -230,7 +258,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
             memoryTableModel.addRow(new Object[]{
                     block.location,
                     (block.size / 1000) + "K",
-                    block.jobNumber,
+                    block.jobNumber == 0 ? "" : block.jobNumber,
                     block.jobSize == 0 ? "" : (block.jobSize / 1000) + "K",
                     block.isFree ? "Free" : "Busy",
                     block.isFree ? "" : (block.internalFragmentation / 1000) + "K"
@@ -247,7 +275,8 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
             jobTableModel.addRow(new Object[]{job.jobNumber, memRequested});
         }
     }
-    
+ 
+
     private void updateTotals(){
         int totalAvailable = 0;
         int totalUsed = 0;
@@ -258,10 +287,10 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
                 totalUsed += block.jobSize;
             }
         }
-         totalAvailableLabel.setText("Total Available Memory: " + (totalAvailable / 100) + "K");
+         totalAvailableLabel.setText("Total Available Memory: " + (totalAvailable / 1000) + "K");
          totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
     }
-   
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -269,7 +298,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
@@ -280,9 +309,8 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jobTable = new javax.swing.JTable();
         addJobButton = new javax.swing.JButton();
-        jobNumberInput = new javax.swing.JTextField();
         jobSizeInput = new javax.swing.JTextField();
-        jobNumberField = new javax.swing.JLabel();
+
         jobSizeField = new javax.swing.JLabel();
         totalAvailableLabel = new javax.swing.JLabel();
         totalUsedLabel = new javax.swing.JLabel();
@@ -347,19 +375,12 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
             }
         });
 
-        jobNumberInput.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jobNumberInputActionPerformed(evt);
-            }
-        });
-
         jobSizeInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jobSizeInputActionPerformed(evt);
             }
         });
 
-        jobNumberField.setText("Job Number");
 
         jobSizeField.setText("Memory Requested (k)");
 
@@ -382,7 +403,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
                                 .addGap(28, 28, 28))
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jobNumberField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    
                                     .addGroup(jPanel1Layout.createSequentialGroup()
                                         .addGap(0, 0, Short.MAX_VALUE)
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -422,7 +443,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
                             .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jobNumberField)
+                                
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jobNumberInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addGap(12, 12, 12)
@@ -450,19 +471,19 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void addJobButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addJobButtonActionPerformed
+    private void addJobButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
         addJob();
-    }//GEN-LAST:event_addJobButtonActionPerformed
+    }                                            
 
-    private void jobNumberInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobNumberInputActionPerformed
+    private void jobNumberInputActionPerformed(java.awt.event.ActionEvent evt) {                                               
         // TODO add your handling code here:
-    }//GEN-LAST:event_jobNumberInputActionPerformed
+    }                                              
 
-    private void jobSizeInputActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jobSizeInputActionPerformed
+    private void jobSizeInputActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
-    }//GEN-LAST:event_jobSizeInputActionPerformed
+    }                                            
     
     /**
      * @param args the command line arguments
@@ -489,14 +510,16 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new FirstFitVisualizer().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton addJobButton;
+    private javax.swing.JButton ResetJobButton;
+    private javax.swing.JButton resetMemoryButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JLabel jobNumberField;
+
     private javax.swing.JTextField jobNumberInput;
     private javax.swing.JLabel jobSizeField;
     private javax.swing.JTextField jobSizeInput;
@@ -504,5 +527,5 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
     private javax.swing.JTable memoryTable;
     private javax.swing.JLabel totalAvailableLabel;
     private javax.swing.JLabel totalUsedLabel;
-    // End of variables declaration//GEN-END:variables
+    // End of variables declaration                   
 }

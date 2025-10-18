@@ -1,73 +1,297 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
-package memoryallocation;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+
 /**
  *
- * @author marionne pascual
+ * @author Wes
  */
 public class BESTFIT extends javax.swing.JFrame {
+
+    int jobNum = 0;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BESTFIT.class.getName());
 
+    // ----- Data Structures -----
+    static class Job {
+        int jobNumber;
+        int jobSize;
+        boolean allocated = false;
+
+        public Job(int jobNumber, int jobSize) {
+            this.jobNumber = jobNumber;
+            this.jobSize = jobSize;
+        }
+    }
+    
+    class MemoryBlock {
+        int location;
+        int size;
+        boolean isFree = true;
+        int jobNumber = 0;
+        int jobSize = 0;
+        int internalFragmentation = 0;
+
+        public MemoryBlock(int location, int size) {
+            this.location = location;
+            this.size = size;
+        }
+        
+        public MemoryBlock() {
+            //TODO Auto-generated constructor stub
+        }
+
+        public void resetAll() {
+            isFree = true;
+            jobNumber = 0;
+            jobSize = 0;
+            internalFragmentation = 0;
+        }
+        public void resetJob() {
+            DefaultTableModel jTable = (DefaultTableModel) jobTable.getModel();
+            jobs.clear();
+            jTable.setRowCount(0);
+            jobNum = 0;
+            
+        }
+        public void resetMem() {
+            DefaultTableModel jTable = (DefaultTableModel) memoryTable.getModel();
+            jTable.setRowCount(0);
+            blocks.clear();
+        }
+    }   
+
+    
+        // ----- Instance Variables -----
+
+    private final List<MemoryBlock> blocks = new ArrayList<>();
+    private final List<Job> jobs = new ArrayList<>();
+        
+   
+     // --- Instance variables for memory management ---;
+    private DefaultTableModel memoryTableModel, jobTableModel;
+    private JTextField blockLocationInput, blockSizeInput;
+    private JButton addBlockButton, calculateButton;
+    
     /**
-     * Creates new form BESTFIT
+     * Creates new form FirstFitVisualizer
      */
     public BESTFIT() {
-        initComponents();
+        setTitle("Best Fit Memory Manager");
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setSize(1400, 720);
+        setLocationRelativeTo(null);
+        
+        // Layout
+
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        JLabel titleLabel = new JLabel("Best Fit Memory Manager", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Montserrat", Font.BOLD, 28));
+        titleLabel.setBackground(new Color(25, 24, 37));
+        titleLabel.setOpaque(true);
+        titleLabel.setForeground(Color.WHITE);
+        titleLabel.setPreferredSize(new Dimension(1000, 60));
+        titleLabel.setBackground(new Color(25, 24, 37));
+        mainPanel.add(titleLabel, BorderLayout.NORTH);
+        
+        
+        JPanel centerPanel = new JPanel(new GridLayout(1, 2, 20, 0));
+
+        // ----- JOB PANEL -----
+        JPanel jobPanel = new JPanel(new BorderLayout());
+        jobPanel.setBorder(BorderFactory.createTitledBorder("Job List"));
+        jobTableModel = new DefaultTableModel(new Object[]{"Job Number", "Memory Requested"}, 0);
+        jobTable = new JTable(jobTableModel);
+        jobPanel.add(new JScrollPane(jobTable), BorderLayout.CENTER);
+
+        JPanel jobInputPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        jobSizeInput = new JTextField();
+        addJobButton = new JButton("Add Job");
+        ResetJobButton = new JButton("Reset Jobs");
+        jobInputPanel.add(new JLabel("Memory Requested (K):"));
+        jobInputPanel.add(jobSizeInput);
+        jobInputPanel.add(new JLabel(""));
+        jobInputPanel.add(addJobButton);
+        jobInputPanel.add(new JLabel(""));
+        jobInputPanel.add(ResetJobButton);
+        jobPanel.add(jobInputPanel, BorderLayout.SOUTH);
+        
+        // ----- MEMORY PANEL -----
+        JPanel memoryPanel = new JPanel(new BorderLayout());
+        memoryPanel.setBorder(BorderFactory.createTitledBorder("Memory List"));
+        memoryTableModel = new DefaultTableModel(new Object[]{
+                "Memory location", "Memory block size", "Job number", "Job size", "Status", "Internal fragmentation"
+        }, 0);
+        memoryTable = new JTable(memoryTableModel);
+        memoryPanel.add(new JScrollPane(memoryTable), BorderLayout.CENTER);
+
+        JPanel blockInputPanel = new JPanel(new GridLayout(4, 2, 5, 5));
+        blockLocationInput = new JTextField();
+        blockSizeInput = new JTextField();
+        addBlockButton = new JButton("Add Block");
+        resetMemoryButton = new JButton("Reset Memory Table");
+        blockInputPanel.add(new JLabel("Memory Location:"));
+        blockInputPanel.add(blockLocationInput);
+        blockInputPanel.add(new JLabel("Block Size (K):"));
+        blockInputPanel.add(blockSizeInput);
+        blockInputPanel.add(new JLabel(""));
+        blockInputPanel.add(addBlockButton);
+        blockInputPanel.add(new JLabel(""));
+        blockInputPanel.add(resetMemoryButton);
+        memoryPanel.add(blockInputPanel, BorderLayout.SOUTH);
+
+        centerPanel.add(jobPanel);
+        centerPanel.add(memoryPanel);
+
+        mainPanel.add(centerPanel, BorderLayout.CENTER);
+
+        // ----- CALCULATE BUTTON -----
+        calculateButton = new JButton("Calculate Allocation");
+        calculateButton.setFont(new Font("Montserrat", Font.BOLD, 16));
+        JPanel calcPanel = new JPanel(new BorderLayout());
+        JPanel btnPanel = new JPanel();
+
+        btnPanel.add(calculateButton);
+        calcPanel.add(btnPanel, BorderLayout.CENTER);
+        mainPanel.add(calcPanel, BorderLayout.SOUTH);
+        
+        JPanel totalsPane1 = new JPanel(new GridLayout(1, 2, 10, 0));
+        totalAvailableLabel = new JLabel("Total Available Memory Block Size: ");
+        totalUsedLabel = new JLabel("Total Used Job Size: ");
+        totalsPane1.add(totalAvailableLabel);
+        totalsPane1.add(totalUsedLabel);
+        calcPanel.add(totalsPane1, BorderLayout.SOUTH);
+        
+        
+        
+        
+      
+        setContentPane(mainPanel);
+
+        // ----- ACTIONS -----
+        addBlockButton.addActionListener(e -> addBlock());
+        addJobButton.addActionListener(e -> addJob());
+        MemoryBlock mBlock = new MemoryBlock();
+        ResetJobButton.addActionListener(e -> mBlock.resetJob());
+        resetMemoryButton.addActionListener(e -> mBlock.resetMem());
+        calculateButton.addActionListener(e -> calculateAllocation());
     }
     
-    public void CalculateAllocation(){
-        DefaultTableModel jobTable = (DefaultTableModel) JobTable.getModel();
-        DefaultTableModel memoryTable = (DefaultTableModel) MemoryTable.getModel();
-        
-        int totalBlockSize = 0;
-        int totalJobSize = 0;
-        
-        for(int i = 0; i < jobTable.getRowCount(); i++){
-            int jobNum = Integer.parseInt(jobTable.getValueAt(i, 0).toString());
-            int jobSize = Integer.parseInt(jobTable.getValueAt(i, 1).toString());
+        // ----- Add Job and Allocate -----
+
+    
+    private void addBlock() {
+        String locStr = blockLocationInput.getText().trim();
+        String sizeStr = blockSizeInput.getText().trim();
+        if (locStr.isEmpty() || sizeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter both location and block size", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            int loc = Integer.parseInt(locStr);
+            int size = Integer.parseInt(sizeStr) * 1000;
+            blocks.add(new MemoryBlock(loc, size));
+            updateMemoryTable();
+            blockLocationInput.setText("");
+            blockSizeInput.setText("");
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Enter valid numbers", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void addJob() {
+        String jobSizeStr = jobSizeInput.getText().trim();
+        if (jobSizeStr.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Enter memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        try {
+            int jobSize = Integer.parseInt(jobSizeStr) * 1000;
+        if(jobNum == 0){
+            jobNum = 1;
+        } else{
+            jobNum += 1;
+        }
+            jobs.add(new Job(jobNum, jobSize));
+            jobTableModel.addRow(new Object[]{jobNum, jobSizeStr + "K"});
+
+            jobSizeInput.setText("");
+        } catch (NumberFormatException ex) {
+            JOptionPane.showMessageDialog(this, "Enter a valid number for memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    private void calculateAllocation() {
+        // Reset all blocks and jobs
+        for (MemoryBlock block : blocks) block.resetAll();
+        for (Job job : jobs) job.allocated = false;
+
+        // Best Fit for each job
+        for (Job job : jobs) {
             int bestIndex = -1;
             int bestFit = Integer.MAX_VALUE;
-            
-            for(int j = 0; j < memoryTable.getRowCount(); j++){
-                String status = memoryTable.getValueAt(j, 4).toString();
-                int blockSize = Integer.parseInt(memoryTable.getValueAt(j, 1).toString());
-                
-                if (status.equals("Free") && blockSize >= jobSize && blockSize < bestFit) {
-                    bestFit = blockSize;
-                    bestIndex = j;
+            for (int i = 0; i < blocks.size(); i++) {
+                MemoryBlock block = blocks.get(i);
+                if (block.isFree && block.size >= job.jobSize && block.size < bestFit) {
+                    bestFit = block.size;
+                    bestIndex = i;
                 }
             }
-            if(bestIndex != -1){
-                memoryTable.setValueAt("J"+jobNum, bestIndex, 2);
-                memoryTable.setValueAt(jobSize + "K", bestIndex, 3);
-                memoryTable.setValueAt("Busy", bestIndex, 4);
-                
-                int blockSize = Integer.parseInt(memoryTable.getValueAt(bestIndex, 1).toString());
-                int interFrag = blockSize - jobSize;
-                if(interFrag == 0)
-                    memoryTable.setValueAt("None", bestIndex, 5);
-                else
-                    memoryTable.setValueAt(interFrag + "K", bestIndex, 5);
+            if (bestIndex != -1) {
+                MemoryBlock block = blocks.get(bestIndex);
+                block.isFree = false;
+                block.jobNumber = job.jobNumber;
+                block.jobSize = job.jobSize;
+                block.internalFragmentation = block.size - job.jobSize;
+                job.allocated = true;
+            }
+            // If not allocated, will show * in jobs table
+        }
+        updateMemoryTable();
+        updateJobTableWithStatus();
+        updateTotals();
+    }
+    //
+    private void updateMemoryTable() {
+        memoryTableModel.setRowCount(0);
+        for (MemoryBlock block : blocks) {
+            memoryTableModel.addRow(new Object[]{
+                    block.location,
+                    (block.size / 1000) + "K",
+                    block.jobNumber == 0 ? "" : block.jobNumber,
+                    block.jobSize == 0 ? "" : (block.jobSize / 1000) + "K",
+                    block.isFree ? "Free" : "Busy",
+                    block.isFree ? "" : (block.internalFragmentation / 1000) + "K"
+            });
+        }
+    }
+    private void updateJobTableWithStatus(){
+        jobTableModel.setRowCount(0);
+        for(Job job : jobs){
+            String memRequested = (job.jobSize / 1000) + "K";
+            if(!job.allocated){
+                memRequested += " *";
+            }
+            jobTableModel.addRow(new Object[]{job.jobNumber, memRequested});
+        }
+    }
+ 
 
-                totalBlockSize += blockSize;
-                totalJobSize += jobSize;
-            }else{
-                jobTable.setValueAt(jobSize+"*", i, 1);
+    private void updateTotals(){
+        int totalAvailable = 0;
+        int totalUsed = 0;
+        for(MemoryBlock block : blocks){
+            if(block.isFree){
+                totalAvailable += block.size;
+            } else{
+                totalUsed += block.jobSize;
             }
         }
-        txtTBlockSize.setText(totalBlockSize + "K");
-        txtTJobSize.setText(totalJobSize + "K");
+         totalAvailableLabel.setText("Total Available Memory: " + (totalAvailable / 1000) + "K");
+         totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
     }
-    
+
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -75,164 +299,95 @@ public class BESTFIT extends javax.swing.JFrame {
      * regenerated by the Form Editor.
      */
     @SuppressWarnings("unchecked")
-    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
 
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        JobTable = new javax.swing.JTable();
+        memoryTable = new javax.swing.JTable();
         jScrollPane2 = new javax.swing.JScrollPane();
-        MemoryTable = new javax.swing.JTable();
-        txtJobNumber = new javax.swing.JTextField();
-        txtMemoryRequested = new javax.swing.JTextField();
-        btnAddJob = new javax.swing.JButton();
-        jLabel2 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        jLabel5 = new javax.swing.JLabel();
-        txtMemoryLocation = new javax.swing.JTextField();
-        txtBlockSize = new javax.swing.JTextField();
-        btnAddBlock = new javax.swing.JButton();
-        btnCalculate = new javax.swing.JButton();
-        jLabel6 = new javax.swing.JLabel();
-        txtTJobSize = new javax.swing.JTextField();
-        jLabel7 = new javax.swing.JLabel();
-        txtTBlockSize = new javax.swing.JTextField();
-        btnClearMemory = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        btnClearJob = new javax.swing.JButton();
-        btnClear = new javax.swing.JButton();
+        jobTable = new javax.swing.JTable();
+        addJobButton = new javax.swing.JButton();
+        jobSizeInput = new javax.swing.JTextField();
+
+        jobSizeField = new javax.swing.JLabel();
+        totalAvailableLabel = new javax.swing.JLabel();
+        totalUsedLabel = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel2.setBackground(new java.awt.Color(0, 0, 0));
+        jPanel2.setBackground(new java.awt.Color(25, 24, 37));
+        jPanel2.setForeground(new java.awt.Color(109, 148, 197));
 
-        jLabel1.setFont(new java.awt.Font("Microsoft Sans Serif", 1, 60)); // NOI18N
+        jLabel1.setBackground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Montserrat Light", 1, 36)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("BEST FIT VISUALIZER");
+        jLabel1.setText("Best Fit Memory Manager");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel2Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
+            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(30, 30, 30)
+                .addGap(28, 28, 28)
                 .addComponent(jLabel1)
-                .addContainerGap(38, Short.MAX_VALUE))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
 
-        JobTable.setModel(new javax.swing.table.DefaultTableModel(
+        memoryTable.setFont(new java.awt.Font("Montserrat Black", 0, 12)); // NOI18N
+        memoryTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "Job number", "Memory requested"
+                "Memory Location", "Job Number", "Job Size", "Status", "Internal Fragmentation"
             }
         ));
-        jScrollPane1.setViewportView(JobTable);
+        jScrollPane1.setViewportView(memoryTable);
 
-        MemoryTable.setModel(new javax.swing.table.DefaultTableModel(
+        jobTable.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
+        jobTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
             },
             new String [] {
-                "Memory Location", "Memory Block Size", "Job number", "Job size", "Status", "Internal Fragmentation"
+                "Job Number", " Memory Requested"
             }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
-            };
+        ));
+        jScrollPane2.setViewportView(jobTable);
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
-        jScrollPane2.setViewportView(MemoryTable);
-
-        btnAddJob.setText("Add Job");
-        btnAddJob.addActionListener(new java.awt.event.ActionListener() {
+        addJobButton.setText("Calculate Allocation");
+        addJobButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddJobActionPerformed(evt);
+                addJobButtonActionPerformed(evt);
             }
         });
 
-        jLabel2.setText("Job Number");
-
-        jLabel3.setText("Memory Request (k)");
-
-        jLabel4.setText("Block Size (k)");
-
-        jLabel5.setText("Memory Location");
-
-        btnAddBlock.setText("Add Block");
-        btnAddBlock.addActionListener(new java.awt.event.ActionListener() {
+        jobSizeInput.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddBlockActionPerformed(evt);
+                jobSizeInputActionPerformed(evt);
             }
         });
 
-        btnCalculate.setText("Calculate Allocation");
-        btnCalculate.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCalculateActionPerformed(evt);
-            }
-        });
 
-        jLabel6.setText("Total Used Job Size");
+        jobSizeField.setText("Memory Requested (k)");
 
-        txtTJobSize.setEditable(false);
-        txtTJobSize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTJobSizeActionPerformed(evt);
-            }
-        });
+        totalAvailableLabel.setText("jLabel2");
 
-        jLabel7.setText("Total Memory Block Size");
-
-        txtTBlockSize.setEditable(false);
-        txtTBlockSize.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtTBlockSizeActionPerformed(evt);
-            }
-        });
-
-        btnClearMemory.setText("Clear");
-        btnClearMemory.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearMemoryActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Done");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        btnClearJob.setText("Clear");
-        btnClearJob.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearJobActionPerformed(evt);
-            }
-        });
-
-        btnClear.setText("Clear All");
-        btnClear.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnClearActionPerformed(evt);
-            }
-        });
+        totalUsedLabel.setText("jLabel2");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -240,219 +395,97 @@ public class BESTFIT extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(183, 183, 183)
-                .addComponent(btnAddJob, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(btnAddBlock, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(352, 352, 352))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(118, 118, 118)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txtJobNumber, javax.swing.GroupLayout.DEFAULT_SIZE, 195, Short.MAX_VALUE)
-                                .addComponent(txtMemoryRequested)))
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                    .addComponent(btnClearJob))
+                .addGap(40, 40, 40)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(69, 69, 69)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 143, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(397, 397, 397)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(txtMemoryLocation, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, 223, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(btnClear)
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGap(28, 28, 28))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(0, 0, Short.MAX_VALUE)
+                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                            .addComponent(jobNumberInput, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
+                                            .addComponent(jobSizeInput))))
+                                .addGap(164, 164, 164)))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(214, 214, 214)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 649, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(280, 280, 280)
+                                .addComponent(totalAvailableLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jButton2)
-                                .addContainerGap())
-                            .addComponent(btnClearMemory)))
+                                .addComponent(totalUsedLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(78, 78, 78))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(54, 54, 54)
-                        .addComponent(jLabel7)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtTBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 782, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(504, 504, 504)
-                .addComponent(btnCalculate, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel6, javax.swing.GroupLayout.PREFERRED_SIZE, 116, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtTJobSize, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(285, 285, 285))
+                        .addComponent(jobSizeField, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(addJobButton, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(3, 3, 3)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 188, Short.MAX_VALUE)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtTBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel7))
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtTJobSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel6)))
-                        .addGap(33, 33, 33)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(58, 58, 58)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtMemoryLocation, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                .addComponent(txtJobNumber, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addComponent(jLabel5)))))
-                .addGap(33, 33, 33)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                        .addComponent(txtMemoryRequested, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(txtBlockSize, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel4)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(10, 10, 10)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 435, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                    .addComponent(totalAvailableLabel)
+                                    .addComponent(totalUsedLabel)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jobNumberInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(12, 12, 12)
+                        .addComponent(jobSizeField))
+                    .addComponent(addJobButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnClearMemory)
-                    .addComponent(btnClearJob))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 8, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAddJob)
-                    .addComponent(btnAddBlock))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(btnCalculate)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton2)
-                    .addComponent(btnClear))
-                .addGap(16, 16, 16))
+                .addComponent(jobSizeInput, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(426, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         pack();
-    }// </editor-fold>//GEN-END:initComponents
+    }// </editor-fold>                        
 
-    private void btnAddJobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddJobActionPerformed
+    private void addJobButtonActionPerformed(java.awt.event.ActionEvent evt) {                                             
+        addJob();
+    }                                            
+
+    private void jobNumberInputActionPerformed(java.awt.event.ActionEvent evt) {                                               
         // TODO add your handling code here:
-        int job = Integer.parseInt(txtJobNumber.getText());
-        int memory = Integer.parseInt(txtMemoryRequested.getText());
-        
-        if ( txtJobNumber.getText().isEmpty() || txtMemoryRequested.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Enter both job number and memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try{
-            DefaultTableModel jobtable = (DefaultTableModel) JobTable.getModel();
-            jobtable.addRow(new Object[]{/*"J"+*/job, memory /*+ "K"*/});
+    }                                              
 
-            txtJobNumber.setText("");
-            txtMemoryRequested.setText("");
-            txtJobNumber.requestFocus();
-        }catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(this, "Enter a valid number for memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }//GEN-LAST:event_btnAddJobActionPerformed
-
-    private void btnAddBlockActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddBlockActionPerformed
+    private void jobSizeInputActionPerformed(java.awt.event.ActionEvent evt) {                                             
         // TODO add your handling code here:
-        int memLoc = Integer.parseInt(txtMemoryLocation.getText());
-        int blockSize = Integer.parseInt(txtBlockSize.getText());
-        
-        if ( txtMemoryLocation.getText().isEmpty() || txtBlockSize.getText().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Enter both job number and memory requested", "Input Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        try{
-            DefaultTableModel memorytable = (DefaultTableModel) MemoryTable.getModel();
-            memorytable.addRow(new Object[]{memLoc, blockSize /*+ "K"*/ , "", "", "Free", ""});
-
-            txtMemoryLocation.setText("");
-            txtBlockSize.setText("");
-            txtMemoryLocation.requestFocus();
-        }catch(NumberFormatException e){
-            JOptionPane.showMessageDialog(this, "Enter a valid number", "Input Error", JOptionPane.ERROR_MESSAGE);
-        }
-        
-    }//GEN-LAST:event_btnAddBlockActionPerformed
-
-    private void btnCalculateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCalculateActionPerformed
-        // TODO add your handling code here:
-        CalculateAllocation();
-    }//GEN-LAST:event_btnCalculateActionPerformed
-
-    private void txtTJobSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTJobSizeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTJobSizeActionPerformed
-
-    private void txtTBlockSizeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTBlockSizeActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtTBlockSizeActionPerformed
-
-    private void btnClearMemoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearMemoryActionPerformed
-        // TODO add your handling code here:
-        
-        DefaultTableModel memoryTable = (DefaultTableModel) MemoryTable.getModel();
-        for(int i = 0; i < memoryTable.getRowCount(); i++){
-            memoryTable.setValueAt("", i, 2);  
-            memoryTable.setValueAt("", i, 3);  
-            memoryTable.setValueAt("Free", i, 4); 
-            memoryTable.setValueAt("", i, 5);  
-        }
-        txtTBlockSize.setText("");
-        txtTJobSize.setText("");
-    }//GEN-LAST:event_btnClearMemoryActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-        this.dispose();
-    }//GEN-LAST:event_jButton2ActionPerformed
-
-    private void btnClearJobActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearJobActionPerformed
-        // TODO add your handling code here:
-        DefaultTableModel jobTable = (DefaultTableModel) JobTable.getModel();
-        jobTable.setRowCount(0);
-    }//GEN-LAST:event_btnClearJobActionPerformed
-
-    private void btnClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnClearActionPerformed
-        // TODO add your handling code here:
-        DefaultTableModel jobTable = (DefaultTableModel) JobTable.getModel();
-        DefaultTableModel memoryTable = (DefaultTableModel) MemoryTable.getModel();
-        
-        jobTable.setRowCount(0);
-        memoryTable.setRowCount(0);
-        txtTBlockSize.setText("");
-        txtTJobSize.setText("");
-    }//GEN-LAST:event_btnClearActionPerformed
-
+    }                                            
+    
     /**
      * @param args the command line arguments
      */
@@ -478,32 +511,22 @@ public class BESTFIT extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(() -> new BESTFIT().setVisible(true));
     }
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable JobTable;
-    private javax.swing.JTable MemoryTable;
-    private javax.swing.JButton btnAddBlock;
-    private javax.swing.JButton btnAddJob;
-    private javax.swing.JButton btnCalculate;
-    private javax.swing.JButton btnClear;
-    private javax.swing.JButton btnClearJob;
-    private javax.swing.JButton btnClearMemory;
-    private javax.swing.JButton jButton2;
+    // Variables declaration - do not modify                     
+    private javax.swing.JButton addJobButton;
+    private javax.swing.JButton ResetJobButton;
+    private javax.swing.JButton resetMemoryButton;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextField txtBlockSize;
-    private javax.swing.JTextField txtJobNumber;
-    private javax.swing.JTextField txtMemoryLocation;
-    private javax.swing.JTextField txtMemoryRequested;
-    private javax.swing.JTextField txtTBlockSize;
-    private javax.swing.JTextField txtTJobSize;
-    // End of variables declaration//GEN-END:variables
+
+    private javax.swing.JTextField jobNumberInput;
+    private javax.swing.JLabel jobSizeField;
+    private javax.swing.JTextField jobSizeInput;
+    private javax.swing.JTable jobTable;
+    private javax.swing.JTable memoryTable;
+    private javax.swing.JLabel totalAvailableLabel;
+    private javax.swing.JLabel totalUsedLabel;
+    // End of variables declaration                   
 }
