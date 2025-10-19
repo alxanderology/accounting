@@ -19,6 +19,7 @@ public class AlgoMenu extends javax.swing.JFrame {
      */
     public AlgoMenu() {
         initComponents();
+        setLocationRelativeTo(null);
         jLabel7.setText("<html><div style='text-align: center;'>"
         + "The First Fit algorithm assigns a process to the first available memory block large enough to hold it. "
         + "It’s simple and fast but may cause external fragmentation since small gaps can appear between allocations."
@@ -129,7 +130,7 @@ public class AlgoMenu extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 470, 143, 31));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 470, 143, 31));
 
         jButton3.setBackground(new java.awt.Color(25, 24, 37));
         jButton3.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
