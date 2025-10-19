@@ -141,7 +141,7 @@ public class SignUpFrame extends javax.swing.JFrame {
             signUpError = true;
         }        
         else{
-            JOptionPane.showMessageDialog(null, "Entity: " + entityName + "\n"
+            JOptionPane.showMessageDialog(this, "Entity: " + entityName + "\n"
             + "Business Organization: " + busOrg + "\n"
             + "Accounting Period: " + accPeriod + "\n");
             

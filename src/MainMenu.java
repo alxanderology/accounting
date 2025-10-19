@@ -269,7 +269,9 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        Ledger ledger = new Ledger(entityName, this);
+        ledger.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
@@ -291,15 +293,16 @@ public class MainMenu extends javax.swing.JFrame {
             return;
         }
         
-        userPrompt up = new userPrompt(entityName, journal);
+        userPrompt up = new userPrompt(entityName, journal, this);
         up.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         if (journal == null) {
-            journal = new Journal(entityName);
+            journal = new Journal(this, entityName);
         }
         journal.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton9ActionPerformed
 
      

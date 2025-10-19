@@ -103,10 +103,10 @@
                 <Component class="javax.swing.JLabel" name="jLabel1">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                      <Font name="Montserrat Black" size="48" style="1"/>
+                      <Font name="Montserrat ExtraBold" size="48" style="1"/>
                     </Property>
                     <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-                      <Color blue="ff" green="ff" red="ff" type="rgb"/>
+                      <Color blue="e6" green="ed" red="f4" type="rgb"/>
                     </Property>
                     <Property name="horizontalAlignment" type="int" value="0"/>
                     <Property name="text" type="java.lang.String" value="TRANSACTIONS"/>
@@ -247,6 +247,7 @@
                     <StringItem index="26" value="Withdrawals"/>
                   </StringArray>
                 </Property>
+                <Property name="selectedIndex" type="int" value="-1"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxDebitActionPerformed"/>
@@ -256,7 +257,7 @@
               </AuxValues>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="590" y="490" width="310" height="60"/>
+                  <AbsoluteConstraints x="590" y="510" width="310" height="60"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -269,7 +270,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="400" y="500" width="400" height="40"/>
+                  <AbsoluteConstraints x="400" y="530" width="400" height="40"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -285,7 +286,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="320" y="420" width="260" height="70"/>
+                  <AbsoluteConstraints x="320" y="450" width="260" height="70"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -333,37 +334,37 @@
                   <Font name="Segoe UI" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="28">
-                    <StringItem index="0" value="Accounts Receivable"/>
-                    <StringItem index="1" value="Accumulated Depreciation"/>
-                    <StringItem index="2" value="Building"/>
-                    <StringItem index="3" value="Cash"/>
-                    <StringItem index="4" value="Equipment"/>
-                    <StringItem index="5" value="Furnitures &amp; Fixtures"/>
-                    <StringItem index="6" value="Inventories"/>
-                    <StringItem index="7" value="Notes Receivable"/>
-                    <StringItem index="8" value="Land"/>
-                    <StringItem index="9" value="Machineries"/>
-                    <StringItem index="10" value="Prepaid Expenses"/>
-                    <StringItem index="11" value="Vehicles"/>
-                    <StringItem index="12" value="Accounts Payable"/>
-                    <StringItem index="13" value="Notes Payable"/>
-                    <StringItem index="14" value="Capital/Equity"/>
-                    <StringItem index="15" value="Withdrawals"/>
-                    <StringItem index="16" value="Depreciation Expense"/>
-                    <StringItem index="17" value="Insurance Expense"/>
-                    <StringItem index="18" value="Interest Expense"/>
-                    <StringItem index="19" value="Liabilities"/>
-                    <StringItem index="20" value="Rent Expense"/>
-                    <StringItem index="21" value="Salaries Expense"/>
-                    <StringItem index="22" value="Sales"/>
-                    <StringItem index="23" value="Service Income"/>
-                    <StringItem index="24" value="Supplies Expense"/>
-                    <StringItem index="25" value="Uncollectible Accounts Expense"/>
-                    <StringItem index="26" value="Unearned Revenues"/>
-                    <StringItem index="27" value="Utilities Expense"/>
+                  <StringArray count="27">
+                    <StringItem index="0" value="Accumulated Depreciation"/>
+                    <StringItem index="1" value="Accounts Payable"/>
+                    <StringItem index="2" value="Accounts Receivable"/>
+                    <StringItem index="3" value="Building"/>
+                    <StringItem index="4" value="Cash"/>
+                    <StringItem index="5" value="Capital/Equity"/>
+                    <StringItem index="6" value="Depreciation Expense"/>
+                    <StringItem index="7" value="Equipment"/>
+                    <StringItem index="8" value="Furnitures &amp; Fixtures"/>
+                    <StringItem index="9" value="Insurance Expense"/>
+                    <StringItem index="10" value="Interest Expense"/>
+                    <StringItem index="11" value="Inventories"/>
+                    <StringItem index="12" value="Land"/>
+                    <StringItem index="13" value="Liabilities"/>
+                    <StringItem index="14" value="Machineries"/>
+                    <StringItem index="15" value="Notes Receivable"/>
+                    <StringItem index="16" value="Prepaid Expenses"/>
+                    <StringItem index="17" value="Rent Expense"/>
+                    <StringItem index="18" value="Salaries Expense"/>
+                    <StringItem index="19" value="Sales"/>
+                    <StringItem index="20" value="Service Income"/>
+                    <StringItem index="21" value="Supplies Expense"/>
+                    <StringItem index="22" value="Uncollectible Accounts Expense"/>
+                    <StringItem index="23" value="Unearned Revenues"/>
+                    <StringItem index="24" value="Utilities Expense"/>
+                    <StringItem index="25" value="Vehicles"/>
+                    <StringItem index="26" value="Withdrawals"/>
                   </StringArray>
                 </Property>
+                <Property name="selectedIndex" type="int" value="-1"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxDebit1ActionPerformed"/>
@@ -399,6 +400,78 @@
                 </Constraint>
               </Constraints>
             </Component>
+            <Component class="javax.swing.JButton" name="jButton3">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="c5" green="94" red="6d" type="rgb"/>
+                </Property>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Montserrat SemiBold" size="14" style="0"/>
+                </Property>
+                <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="e6" green="ed" red="f4" type="rgb"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="RETURN"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButton3ActionPerformed"/>
+              </Events>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="60" y="180" width="110" height="30"/>
+                </Constraint>
+              </Constraints>
+            </Component>
+            <Container class="javax.swing.JPanel" name="jPanel8">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="c3" green="e8" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="300" y="260" width="680" height="160"/>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="680" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
+            <Container class="javax.swing.JPanel" name="jPanel9">
+              <Properties>
+                <Property name="background" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+                  <Color blue="c3" green="e8" red="ff" type="rgb"/>
+                </Property>
+              </Properties>
+              <Constraints>
+                <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
+                  <AbsoluteConstraints x="300" y="440" width="680" height="160"/>
+                </Constraint>
+              </Constraints>
+
+              <Layout>
+                <DimensionLayout dim="0">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="680" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+                <DimensionLayout dim="1">
+                  <Group type="103" groupAlignment="0" attributes="0">
+                      <EmptySpace min="0" pref="160" max="32767" attributes="0"/>
+                  </Group>
+                </DimensionLayout>
+              </Layout>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>

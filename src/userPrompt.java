@@ -3,17 +3,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 import javax.swing.JOptionPane;
-/**
- *
- * @author julie
- */
+
+
 public class userPrompt extends javax.swing.JFrame {
     private Journal pJournal;
+    private MainMenu mainmenu;
     /**
      * Creates new form userPrompt
      */
-    public userPrompt(String en, Journal journal) {
+    public userPrompt(String en, Journal journal, MainMenu main) {
         initComponents();
+        mainmenu = main;
         this.pJournal = journal;
         jLabel3.setText(en);
     }
@@ -47,6 +47,9 @@ public class userPrompt extends javax.swing.JFrame {
         jButton2 = new javax.swing.JButton();
         cboxDebit1 = new javax.swing.JComboBox<>();
         jButton1 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jPanel8 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -71,8 +74,8 @@ public class userPrompt extends javax.swing.JFrame {
         jPanel4.setBackground(new java.awt.Color(109, 148, 197));
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setFont(new java.awt.Font("Montserrat Black", 1, 48)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel1.setFont(new java.awt.Font("Montserrat ExtraBold", 1, 48)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(244, 237, 230));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel1.setText("TRANSACTIONS");
         jPanel4.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 20, 580, 80));
@@ -111,21 +114,22 @@ public class userPrompt extends javax.swing.JFrame {
 
         cboxDebit.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         cboxDebit.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Accumulated Depreciation", "Accounts Payable", "Accounts Receivable", "Building", "Cash", "Capital/Equity", "Depreciation Expense", "Equipment", "Furnitures & Fixtures", "Insurance Expense", "Interest Expense", "Inventories", "Land", "Liabilities", "Machineries", "Notes Receivable", "Prepaid Expenses", "Rent Expense", "Salaries Expense", "Sales", "Service Income", "Supplies Expense", "Uncollectible Accounts Expense", "Unearned Revenues", "Utilities Expense", "Vehicles", "Withdrawals" }));
+        cboxDebit.setSelectedIndex(-1);
         cboxDebit.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboxDebitActionPerformed(evt);
             }
         });
-        jPanel2.add(cboxDebit, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 490, 310, 60));
+        jPanel2.add(cboxDebit, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 510, 310, 60));
 
         jLabel9.setFont(new java.awt.Font("Montserrat Black", 0, 24)); // NOI18N
         jLabel9.setText("Particular:");
-        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 500, 400, 40));
+        jPanel2.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(400, 530, 400, 40));
 
         jLabel4.setFont(new java.awt.Font("Montserrat ExtraBold", 1, 48)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(75, 73, 67));
         jLabel4.setText("CREDIT");
-        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 420, 260, 70));
+        jPanel2.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 450, 260, 70));
 
         jLabel6.setFont(new java.awt.Font("Montserrat ExtraBold", 1, 48)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(75, 73, 67));
@@ -144,7 +148,8 @@ public class userPrompt extends javax.swing.JFrame {
         jPanel2.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 740, 130, 40));
 
         cboxDebit1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        cboxDebit1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Accounts Receivable", "Accumulated Depreciation", "Building", "Cash", "Equipment", "Furnitures & Fixtures", "Inventories", "Notes Receivable", "Land", "Machineries", "Prepaid Expenses", "Vehicles", "Accounts Payable", "Notes Payable", "Capital/Equity", "Withdrawals", "Depreciation Expense", "Insurance Expense", "Interest Expense", "Liabilities", "Rent Expense", "Salaries Expense", "Sales", "Service Income", "Supplies Expense", "Uncollectible Accounts Expense", "Unearned Revenues", "Utilities Expense" }));
+        cboxDebit1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Accumulated Depreciation", "Accounts Payable", "Accounts Receivable", "Building", "Cash", "Capital/Equity", "Depreciation Expense", "Equipment", "Furnitures & Fixtures", "Insurance Expense", "Interest Expense", "Inventories", "Land", "Liabilities", "Machineries", "Notes Receivable", "Prepaid Expenses", "Rent Expense", "Salaries Expense", "Sales", "Service Income", "Supplies Expense", "Uncollectible Accounts Expense", "Unearned Revenues", "Utilities Expense", "Vehicles", "Withdrawals" }));
+        cboxDebit1.setSelectedIndex(-1);
         cboxDebit1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cboxDebit1ActionPerformed(evt);
@@ -162,6 +167,47 @@ public class userPrompt extends javax.swing.JFrame {
             }
         });
         jPanel2.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(790, 740, 190, 40));
+
+        jButton3.setBackground(new java.awt.Color(109, 148, 197));
+        jButton3.setFont(new java.awt.Font("Montserrat SemiBold", 0, 14)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(244, 237, 230));
+        jButton3.setText("RETURN");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+        jPanel2.add(jButton3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 180, 110, 30));
+
+        jPanel8.setBackground(new java.awt.Color(255, 232, 195));
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 680, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 160, Short.MAX_VALUE)
+        );
+
+        jPanel2.add(jPanel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 260, 680, 160));
+
+        jPanel9.setBackground(new java.awt.Color(255, 232, 195));
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 680, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 160, Short.MAX_VALUE)
+        );
+
+        jPanel2.add(jPanel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 440, 680, 160));
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1340, 1000));
 
@@ -223,17 +269,19 @@ public class userPrompt extends javax.swing.JFrame {
             return;
         }
         
-        pJournal.recTransaction(
-                debits,
-                credits,
-                amount
-        );
+        pJournal.recTransaction(debits, credits, amount);
+        JOptionPane.showMessageDialog(this, "Transaction successfully added to Journal.");
         
         txtAmount.setText("");
-        this.dispose();
+        
         
 
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        mainmenu.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -271,6 +319,7 @@ public class userPrompt extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> cboxDebit1;
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -286,6 +335,8 @@ public class userPrompt extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTextField txtAmount;
     // End of variables declaration//GEN-END:variables
 }
