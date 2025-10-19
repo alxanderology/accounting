@@ -4,6 +4,8 @@
  */
 package memoryallocation;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Wes
@@ -54,6 +56,7 @@ public class AlgoMenu extends javax.swing.JFrame {
         jLabel7 = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
+        jButton4 = new javax.swing.JButton();
 
         javax.swing.GroupLayout jDialog1Layout = new javax.swing.GroupLayout(jDialog1.getContentPane());
         jDialog1.getContentPane().setLayout(jDialog1Layout);
@@ -118,7 +121,7 @@ public class AlgoMenu extends javax.swing.JFrame {
         jButton2.setBackground(new java.awt.Color(25, 24, 37));
         jButton2.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
         jButton2.setForeground(new java.awt.Color(255, 255, 255));
-        jButton2.setText("First Fit");
+        jButton2.setText("Exit");
         jButton2.setBorder(null);
         jButton2.setBorderPainted(false);
         jButton2.addActionListener(new java.awt.event.ActionListener() {
@@ -126,7 +129,7 @@ public class AlgoMenu extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 183, 143, 31));
+        jPanel1.add(jButton2, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 470, 143, 31));
 
         jButton3.setBackground(new java.awt.Color(25, 24, 37));
         jButton3.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
@@ -192,6 +195,19 @@ public class AlgoMenu extends javax.swing.JFrame {
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 210, 350, 180));
 
+        jButton4.setBackground(new java.awt.Color(25, 24, 37));
+        jButton4.setFont(new java.awt.Font("Montserrat", 1, 12)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(255, 255, 255));
+        jButton4.setText("First Fit");
+        jButton4.setBorder(null);
+        jButton4.setBorderPainted(false);
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButton4, new org.netbeans.lib.awtextra.AbsoluteConstraints(131, 183, 143, 31));
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -207,8 +223,7 @@ public class AlgoMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        FirstFitVisualizer ff = new FirstFitVisualizer();
-        ff.setVisible(true);
+        JOptionPane.showMessageDialog(null, "Goodbye!");
         this.dispose();
         
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -218,6 +233,12 @@ public class AlgoMenu extends javax.swing.JFrame {
         bf.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        FirstFitVisualizer ff = new FirstFitVisualizer();
+        ff.setVisible(true);
+        this.dispose();        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton4ActionPerformed
     
     /**
      * @param args the command line arguments
@@ -248,6 +269,7 @@ public class AlgoMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
     private javax.swing.JDialog jDialog1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

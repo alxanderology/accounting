@@ -75,7 +75,7 @@ public class BESTFIT extends javax.swing.JFrame {
      // --- Instance variables for memory management ---;
     private DefaultTableModel memoryTableModel, jobTableModel;
     private JTextField blockLocationInput, blockSizeInput;
-    private JButton addBlockButton, calculateButton;
+    private JButton addBlockButton, calculateButton, returnButton;
     
     /**
      * Creates new form FirstFitVisualizer
@@ -149,7 +149,9 @@ public class BESTFIT extends javax.swing.JFrame {
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // ----- CALCULATE BUTTON -----
+        // ----- CALCULATE BUTTON/RETURN  -----
+        returnButton = new JButton("Return to Menu");
+        returnButton.setFont(new Font("Montserrat", Font.BOLD, 16));
         calculateButton = new JButton("Calculate Allocation");
         calculateButton.setFont(new Font("Montserrat", Font.BOLD, 16));
         JPanel calcPanel = new JPanel(new BorderLayout());
@@ -162,6 +164,7 @@ public class BESTFIT extends javax.swing.JFrame {
         JPanel totalsPane1 = new JPanel(new GridLayout(1, 2, 10, 0));
         totalAvailableLabel = new JLabel("Total Available Memory Block Size: ");
         totalUsedLabel = new JLabel("Total Used Job Size: ");
+        btnPanel.add(returnButton);
         totalsPane1.add(totalAvailableLabel);
         totalsPane1.add(totalUsedLabel);
         calcPanel.add(totalsPane1, BorderLayout.SOUTH);
@@ -179,6 +182,7 @@ public class BESTFIT extends javax.swing.JFrame {
         ResetJobButton.addActionListener(e -> mBlock.resetJob());
         resetMemoryButton.addActionListener(e -> mBlock.resetMem());
         calculateButton.addActionListener(e -> calculateAllocation());
+        returnButton.addActionListener(e -> returnMenu());
     }
     
         // ----- Add Job and Allocate -----
@@ -253,6 +257,11 @@ public class BESTFIT extends javax.swing.JFrame {
         updateJobTableWithStatus();
         updateTotals();
     }
+    private void returnMenu(){
+        AlgoMenu menu = new AlgoMenu();
+        menu.setVisible(true);
+        dispose(); 
+    }
     //
     private void updateMemoryTable() {
         memoryTableModel.setRowCount(0);
@@ -279,18 +288,19 @@ public class BESTFIT extends javax.swing.JFrame {
     }
  
 
-    private void updateTotals(){
-        int totalAvailable = 0;
+    private void updateTotals() {
+        int totalMemory = 0;
         int totalUsed = 0;
-        for(MemoryBlock block : blocks){
-            if(block.isFree){
-                totalAvailable += block.size;
-            } else{
+
+        for (MemoryBlock block : blocks) {
+            totalMemory += block.size; // count ALL blocks
+            if (!block.isFree) {
                 totalUsed += block.jobSize;
             }
         }
-         totalAvailableLabel.setText("Total Available Memory: " + (totalAvailable / 1000) + "K");
-         totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
+
+        totalAvailableLabel.setText("Total Memory Block Size: " + (totalMemory / 1000) + "K");
+        totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
     }
 
 

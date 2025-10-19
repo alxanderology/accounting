@@ -76,7 +76,7 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
      // --- Instance variables for memory management ---;
     private DefaultTableModel memoryTableModel, jobTableModel;
     private JTextField blockLocationInput, blockSizeInput;
-    private JButton addBlockButton, calculateButton;
+    private JButton addBlockButton, calculateButton, returnButton;
     
     /**
      * Creates new form FirstFitVisualizer
@@ -150,13 +150,16 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
 
         mainPanel.add(centerPanel, BorderLayout.CENTER);
 
-        // ----- CALCULATE BUTTON -----
+        // ----- CALCULATE BUTTON/RETURN TO MENU -----
+        returnButton = new JButton("Return to Menu");
+        returnButton.setFont(new Font("Montserrat", Font.BOLD, 16));
         calculateButton = new JButton("Calculate Allocation");
         calculateButton.setFont(new Font("Montserrat", Font.BOLD, 16));
         JPanel calcPanel = new JPanel(new BorderLayout());
         JPanel btnPanel = new JPanel();
 
         btnPanel.add(calculateButton);
+        btnPanel.add(returnButton);
         calcPanel.add(btnPanel, BorderLayout.CENTER);
         mainPanel.add(calcPanel, BorderLayout.SOUTH);
         
@@ -180,6 +183,8 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         ResetJobButton.addActionListener(e -> mBlock.resetJob());
         resetMemoryButton.addActionListener(e -> mBlock.resetMem());
         calculateButton.addActionListener(e -> calculateAllocation());
+        returnButton.addActionListener(e -> returnMenu());
+        
     }
     
         // ----- Add Job and Allocate -----
@@ -253,6 +258,11 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
         updateTotals();
 
     }
+    private void returnMenu(){
+        AlgoMenu menu = new AlgoMenu();
+        menu.setVisible(true);
+        dispose(); 
+    }
     //
     private void updateMemoryTable() {
         memoryTableModel.setRowCount(0);
@@ -279,19 +289,21 @@ public class FirstFitVisualizer extends javax.swing.JFrame {
     }
  
 
-    private void updateTotals(){
-        int totalAvailable = 0;
+    private void updateTotals() {
+        int totalMemory = 0;
         int totalUsed = 0;
-        for(MemoryBlock block : blocks){
-            if(block.isFree){
-                totalAvailable += block.size;
-            } else{
+
+        for (MemoryBlock block : blocks) {
+            totalMemory += block.size; // count ALL blocks
+            if (!block.isFree) {
                 totalUsed += block.jobSize;
             }
         }
-         totalAvailableLabel.setText("Total Available Memory: " + (totalAvailable / 1000) + "K");
-         totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
+
+        totalAvailableLabel.setText("Total Memory Block Size: " + (totalMemory / 1000) + "K");
+        totalUsedLabel.setText("Total Used Job Size: " + (totalUsed / 1000) + "K");
     }
+
 
 
     /**
