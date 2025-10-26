@@ -2,14 +2,14 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Wes
  */
 public class UnadjustedTB extends javax.swing.JFrame {
     
-    
+    private DefaultTableModel model;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UnadjustedTB.class.getName());
 
     /**
@@ -17,7 +17,7 @@ public class UnadjustedTB extends javax.swing.JFrame {
      */
     public UnadjustedTB() {
         initComponents();
-        
+        model = (DefaultTableModel) jTable1.getModel();
     }
 
     /**
@@ -32,6 +32,8 @@ public class UnadjustedTB extends javax.swing.JFrame {
         jPanel1 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        jTable1 = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
 
@@ -57,6 +59,19 @@ public class UnadjustedTB extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Montserrat", 0, 18)); // NOI18N
         jLabel2.setText("Unadjusted Trial Balance");
 
+        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "PARTICULARS", "DEBIT", "CREDIT"
+            }
+        ));
+        jScrollPane1.setViewportView(jTable1);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -64,12 +79,15 @@ public class UnadjustedTB extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(339, 339, 339)
+                        .addGap(206, 206, 206)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(619, 619, 619)
-                        .addComponent(jLabel2)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(488, 488, 488)
+                        .addComponent(jLabel2))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(379, 379, 379)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(232, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -78,7 +96,9 @@ public class UnadjustedTB extends javax.swing.JFrame {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 372, Short.MAX_VALUE))
+                .addGap(32, 32, 32)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 202, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(109, 148, 197));
@@ -93,16 +113,16 @@ public class UnadjustedTB extends javax.swing.JFrame {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(346, 346, 346)
+                .addGap(216, 216, 216)
                 .addComponent(jLabel1)
-                .addContainerGap(477, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addContainerGap(14, Short.MAX_VALUE)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
                 .addComponent(jLabel1)
-                .addGap(17, 17, 17))
+                .addContainerGap(10, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -116,12 +136,141 @@ public class UnadjustedTB extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(36, 36, 36)
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    public void load(Ledger ledger) {
+        model.setRowCount(0);
+        DefaultTableModel ldgModel = (DefaultTableModel) ledger.getLedgerTable().getModel();
+
+        for (int i = 0; i < ldgModel.getRowCount(); i++) {
+            Object accObj = ldgModel.getValueAt(i, 0);
+
+            
+            if (accObj == null) {
+                continue;
+            }
+
+            String account = accObj.toString().trim();
+            if (account.isEmpty()) {
+                continue;
+            }
+
+            double lastBalance = 0.0;
+
+            
+            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
+                Object nextAcc = ldgModel.getValueAt(j, 0);
+
+                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) {
+                    break;
+                }
+
+                Object balObj = ldgModel.getValueAt(j, 3);
+                if (balObj != null) {
+                    String balStr = balObj.toString().trim();
+                    if (!balStr.isEmpty()) {
+                        try {
+                            lastBalance = Double.parseDouble(balStr);
+                        } catch (NumberFormatException e) {
+                            lastBalance = 0.0;
+                        }
+                    }
+                }
+            }
+
+            
+            boolean exists = false;
+            for (int row = 0; row < model.getRowCount(); row++) {
+                Object existingAcc = model.getValueAt(row, 0);
+                if (existingAcc != null && existingAcc.toString().equalsIgnoreCase(account)) {
+                    exists = true;
+                    break;
+                }
+            }
+            if (exists) {
+                continue;
+            }
+
+            
+            double debit = 0.0;
+            double credit = 0.0;
+
+            if (lastBalance > 0) {
+                debit = lastBalance;
+            } else if (lastBalance < 0) {
+                credit = Math.abs(lastBalance);
+            }
+
+            
+            Object debitValue;
+            Object creditValue;
+
+            if (debit == 0.0) {
+                debitValue = "";
+            } else {
+                debitValue = debit;
+            }
+
+            if (credit == 0.0) {
+                creditValue = "";
+            } else {
+                creditValue = credit;
+            }
+
+            model.addRow(new Object[]{account, debitValue, creditValue});
+        }
+        addTotal();
+    }
+    
+    private void addTotal(){
+        double tDebit = 0.0;
+        double tCredit = 0.0; 
+        DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+        
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object debitObj = model.getValueAt(i, 1);
+            Object creditObj = model.getValueAt(i, 2);
+
+            if (debitObj != null && !debitObj.toString().isEmpty()) {
+                try {
+                    tDebit += Double.parseDouble(debitObj.toString());
+                } catch (NumberFormatException e) {}
+            }
+
+            if (creditObj != null && !creditObj.toString().isEmpty()) {
+                try {
+                    tCredit += Double.parseDouble(creditObj.toString());
+                } catch (NumberFormatException e) {}
+            }
+        }
+        model.addRow(new Object[]{"", "", ""});
+        model.addRow(new Object[]{"TOTAL", String.format("%.2f", tDebit), String.format("%.2f", tCredit)});
+        
+        jTable1.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            public java.awt.Component getTableCellRendererComponent(
+                    javax.swing.JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                
+                if (row == table.getRowCount() - 1) {
+                    c.setFont(c.getFont().deriveFont(java.awt.Font.BOLD));
+                    c.setBackground(new java.awt.Color(230, 230, 230)); 
+                } else {
+                    c.setBackground(java.awt.Color.WHITE); 
+                }
+
+                return c;
+            }
+        });
+    }
+
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
         // TODO add your handling code here:
@@ -157,6 +306,8 @@ public class UnadjustedTB extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
 }

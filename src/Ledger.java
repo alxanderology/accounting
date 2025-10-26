@@ -2,13 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.table.DefaultTableModel;
+import javax.swing.*;
 /**
- *
+ 
  * @author LOQ
  */
+
 public class Ledger extends javax.swing.JFrame {
-    
+    private DefaultTableModel model;
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Ledger.class.getName());
     private MainMenu mainmenu;
     private String entityName;
@@ -20,8 +22,99 @@ public class Ledger extends javax.swing.JFrame {
         this.entityName = en;
         mainmenu = main;
         jTextField1.setText(entityName);
+        
+        tblLedger.setModel(new DefaultTableModel(
+            new Object[][]{},
+            new String[]{"Particulars", "Debit", "Credit", "Balance"}
+        ));
+        model = (DefaultTableModel) tblLedger.getModel();
     }
+    
 
+    public void addTransaction(String part, String debit, String credit){
+        double dt = 0.0;
+        double ct = 0.0;
+
+        try {
+            if (debit != null && !debit.trim().isEmpty()) {
+                dt = Double.parseDouble(debit);
+            }
+            if (credit != null && !credit.trim().isEmpty()) {
+                ct = Double.parseDouble(credit);
+            }
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Invalid number format for debit or credit");
+            return;
+        }
+        
+        
+        int check = -1;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object value = model.getValueAt(i, 0);
+            if (value != null && value.toString().equalsIgnoreCase(part)) {
+                check = i;
+                break;
+            }
+        }
+
+        double balance = 0.0;
+
+        
+        if (check == -1) {
+            model.addRow(new Object[]{part, "", "", ""});
+            check = model.getRowCount() - 1;
+            balance = dt - ct;
+            model.addRow(new Object[]{"", dt, ct, balance});
+        } else {
+            int lastRow = check;
+
+       
+            for (int i = check + 1; i < model.getRowCount(); i++) {
+                Object nextAcc = model.getValueAt(i, 0);
+                if (nextAcc != null && !nextAcc.toString().isEmpty()) break;
+                lastRow = i;
+            }
+
+            
+            Object balObj = model.getValueAt(lastRow, 3);
+            if (balObj != null && !balObj.toString().isEmpty()) {
+                try {
+                    balance = Double.parseDouble(balObj.toString());
+                } catch (NumberFormatException e) {
+                    balance = 0.0;
+                }
+            } else {
+                balance = 0.0;
+            }
+
+            
+            balance += (dt - ct);
+
+            
+            model.insertRow(lastRow + 1, new Object[]{"", dt, ct, balance});
+
+            
+            
+        }
+       
+    }
+    
+    private int findLastRowOfAccount(String account) {
+        int lastRow = -1;
+        for (int i = 0; i < model.getRowCount(); i++) {
+            Object acc = model.getValueAt(i, 0);
+            if (acc != null && acc.toString().equalsIgnoreCase(account)) {
+                lastRow = i;
+            }
+        }
+        for (int i = lastRow + 1; i < model.getRowCount(); i++) {
+            Object acc = model.getValueAt(i, 0);
+            if (acc != null && !acc.toString().isEmpty()) break;
+            lastRow = i;
+        }
+        return lastRow;
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -37,6 +130,8 @@ public class Ledger extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblLedger = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -93,6 +188,16 @@ public class Ledger extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Montserrat Medium", 0, 18)); // NOI18N
         jLabel2.setText("General Ledger");
 
+        tblLedger.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null}
+            },
+            new String [] {
+                "ACCOUNT", "DEBIT", "CREDIT", "BALANCE"
+            }
+        ));
+        jScrollPane1.setViewportView(tblLedger);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -105,21 +210,27 @@ public class Ledger extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(164, 164, 164))
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(151, 151, 151)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 809, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addGap(0, 625, Short.MAX_VALUE))
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(160, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -176,6 +287,16 @@ public class Ledger extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JTable tblLedger;
     // End of variables declaration//GEN-END:variables
+    public DefaultTableModel getModel(){
+        return model;
+    }
+    
+    public JTable getLedgerTable(){
+        return tblLedger;
+    }
+
 }

@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.*;
 /**
  *
  * @author LOQ
@@ -11,6 +11,7 @@ public class MainMenu extends javax.swing.JFrame {
     
     private String entityName;
     private Journal journal;
+    private Ledger ledger;
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainMenu.class.getName());
 
@@ -269,7 +270,7 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        Ledger ledger = new Ledger(entityName, this);
+        if (ledger == null) ledger = new Ledger(entityName, this);
         ledger.setVisible(true);
         this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
@@ -284,16 +285,21 @@ public class MainMenu extends javax.swing.JFrame {
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         UnadjustedTB utb = new UnadjustedTB();
+        utb.load(ledger);
         utb.setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         if (journal == null) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Please open the General Journal first.");
+            JOptionPane.showMessageDialog(this, "Please open the General Journal first.");
             return;
         }
         
-        userPrompt up = new userPrompt(entityName, journal, this);
+        if (ledger == null){
+            ledger = new Ledger(entityName, this);
+        }
+        
+        userPrompt up = new userPrompt(entityName, journal, this, ledger);
         up.setVisible(true);
     }//GEN-LAST:event_jButton3ActionPerformed
 

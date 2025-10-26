@@ -80,7 +80,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="390" y="160" width="570" height="90"/>
+                  <AbsoluteConstraints x="360" y="140" width="570" height="90"/>
                 </Constraint>
               </Constraints>
             </Component>
@@ -92,7 +92,7 @@
               </Properties>
               <Constraints>
                 <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                  <AbsoluteConstraints x="0" y="40" width="1340" height="110"/>
+                  <AbsoluteConstraints x="0" y="40" width="1340" height="70"/>
                 </Constraint>
               </Constraints>
 
@@ -113,7 +113,7 @@
                   </Properties>
                   <Constraints>
                     <Constraint layoutClass="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout" value="org.netbeans.modules.form.compat2.layouts.DesignAbsoluteLayout$AbsoluteConstraintsDescription">
-                      <AbsoluteConstraints x="380" y="20" width="580" height="80"/>
+                      <AbsoluteConstraints x="370" y="0" width="580" height="80"/>
                     </Constraint>
                   </Constraints>
                 </Component>
@@ -170,7 +170,7 @@
             <Component class="javax.swing.JLabel" name="jLabel7">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Montserrat Black" size="24" style="0"/>
+                  <Font name="Montserrat ExtraBold" size="24" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Particular:"/>
               </Properties>
@@ -211,46 +211,53 @@
                 <Property name="useNullLayout" type="boolean" value="false"/>
               </Layout>
             </Container>
-            <Component class="javax.swing.JComboBox" name="cboxDebit">
+            <Component class="javax.swing.JComboBox" name="cboxCredit">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="18" style="0"/>
+                  <Font name="Montserrat Medium" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="27">
+                  <StringArray count="34">
                     <StringItem index="0" value="Accumulated Depreciation"/>
                     <StringItem index="1" value="Accounts Payable"/>
                     <StringItem index="2" value="Accounts Receivable"/>
-                    <StringItem index="3" value="Building"/>
-                    <StringItem index="4" value="Cash"/>
-                    <StringItem index="5" value="Capital/Equity"/>
-                    <StringItem index="6" value="Depreciation Expense"/>
-                    <StringItem index="7" value="Equipment"/>
-                    <StringItem index="8" value="Furnitures &amp; Fixtures"/>
-                    <StringItem index="9" value="Insurance Expense"/>
-                    <StringItem index="10" value="Interest Expense"/>
-                    <StringItem index="11" value="Inventories"/>
-                    <StringItem index="12" value="Land"/>
-                    <StringItem index="13" value="Liabilities"/>
-                    <StringItem index="14" value="Machineries"/>
-                    <StringItem index="15" value="Notes Receivable"/>
-                    <StringItem index="16" value="Prepaid Expenses"/>
-                    <StringItem index="17" value="Rent Expense"/>
-                    <StringItem index="18" value="Salaries Expense"/>
-                    <StringItem index="19" value="Sales"/>
-                    <StringItem index="20" value="Service Income"/>
-                    <StringItem index="21" value="Supplies Expense"/>
-                    <StringItem index="22" value="Uncollectible Accounts Expense"/>
-                    <StringItem index="23" value="Unearned Revenues"/>
-                    <StringItem index="24" value="Utilities Expense"/>
-                    <StringItem index="25" value="Vehicles"/>
-                    <StringItem index="26" value="Withdrawals"/>
+                    <StringItem index="3" value="Advertisement Expense"/>
+                    <StringItem index="4" value="Bonds Payable"/>
+                    <StringItem index="5" value="Bonds Receivable"/>
+                    <StringItem index="6" value="Building"/>
+                    <StringItem index="7" value="Cash"/>
+                    <StringItem index="8" value="Capital/Equity"/>
+                    <StringItem index="9" value="Cost of Goods Sold (COGS)"/>
+                    <StringItem index="10" value="Depreciation Expense"/>
+                    <StringItem index="11" value="Equipment"/>
+                    <StringItem index="12" value="Furnitures &amp; Fixtures"/>
+                    <StringItem index="13" value="Insurance Expense"/>
+                    <StringItem index="14" value="Interest Expense"/>
+                    <StringItem index="15" value="Inventories"/>
+                    <StringItem index="16" value="Land"/>
+                    <StringItem index="17" value="Liabilities"/>
+                    <StringItem index="18" value="Machineries"/>
+                    <StringItem index="19" value="Notes Payable"/>
+                    <StringItem index="20" value="Notes Receivable"/>
+                    <StringItem index="21" value="Prepaid Expenses"/>
+                    <StringItem index="22" value="Rent Expense"/>
+                    <StringItem index="23" value="Salaries Expense"/>
+                    <StringItem index="24" value="Sales"/>
+                    <StringItem index="25" value="Sales Returns and Sales Discount"/>
+                    <StringItem index="26" value="Service Revenue"/>
+                    <StringItem index="27" value="Supplies"/>
+                    <StringItem index="28" value="Supplies Expense"/>
+                    <StringItem index="29" value="Uncollectible Accounts Expense"/>
+                    <StringItem index="30" value="Unearned Revenues"/>
+                    <StringItem index="31" value="Utilities Expense"/>
+                    <StringItem index="32" value="Vehicles"/>
+                    <StringItem index="33" value="Withdrawals"/>
                   </StringArray>
                 </Property>
                 <Property name="selectedIndex" type="int" value="-1"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxDebitActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxCreditActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
@@ -264,7 +271,7 @@
             <Component class="javax.swing.JLabel" name="jLabel9">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Montserrat Black" size="24" style="0"/>
+                  <Font name="Montserrat ExtraBold" size="24" style="0"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Particular:"/>
               </Properties>
@@ -328,46 +335,53 @@
                 </Constraint>
               </Constraints>
             </Component>
-            <Component class="javax.swing.JComboBox" name="cboxDebit1">
+            <Component class="javax.swing.JComboBox" name="cboxDebit">
               <Properties>
                 <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-                  <Font name="Segoe UI" size="18" style="0"/>
+                  <Font name="Montserrat Medium" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="27">
+                  <StringArray count="34">
                     <StringItem index="0" value="Accumulated Depreciation"/>
                     <StringItem index="1" value="Accounts Payable"/>
                     <StringItem index="2" value="Accounts Receivable"/>
-                    <StringItem index="3" value="Building"/>
-                    <StringItem index="4" value="Cash"/>
-                    <StringItem index="5" value="Capital/Equity"/>
-                    <StringItem index="6" value="Depreciation Expense"/>
-                    <StringItem index="7" value="Equipment"/>
-                    <StringItem index="8" value="Furnitures &amp; Fixtures"/>
-                    <StringItem index="9" value="Insurance Expense"/>
-                    <StringItem index="10" value="Interest Expense"/>
-                    <StringItem index="11" value="Inventories"/>
-                    <StringItem index="12" value="Land"/>
-                    <StringItem index="13" value="Liabilities"/>
-                    <StringItem index="14" value="Machineries"/>
-                    <StringItem index="15" value="Notes Receivable"/>
-                    <StringItem index="16" value="Prepaid Expenses"/>
-                    <StringItem index="17" value="Rent Expense"/>
-                    <StringItem index="18" value="Salaries Expense"/>
-                    <StringItem index="19" value="Sales"/>
-                    <StringItem index="20" value="Service Income"/>
-                    <StringItem index="21" value="Supplies Expense"/>
-                    <StringItem index="22" value="Uncollectible Accounts Expense"/>
-                    <StringItem index="23" value="Unearned Revenues"/>
-                    <StringItem index="24" value="Utilities Expense"/>
-                    <StringItem index="25" value="Vehicles"/>
-                    <StringItem index="26" value="Withdrawals"/>
+                    <StringItem index="3" value="Advertisement Expense"/>
+                    <StringItem index="4" value="Bonds Payable"/>
+                    <StringItem index="5" value="Bonds Receivable"/>
+                    <StringItem index="6" value="Building"/>
+                    <StringItem index="7" value="Cash"/>
+                    <StringItem index="8" value="Capital/Equity"/>
+                    <StringItem index="9" value="Cost of Goods Sold (COGS)"/>
+                    <StringItem index="10" value="Depreciation Expense"/>
+                    <StringItem index="11" value="Equipment"/>
+                    <StringItem index="12" value="Furnitures &amp; Fixtures"/>
+                    <StringItem index="13" value="Insurance Expense"/>
+                    <StringItem index="14" value="Interest Expense"/>
+                    <StringItem index="15" value="Inventories"/>
+                    <StringItem index="16" value="Land"/>
+                    <StringItem index="17" value="Liabilities"/>
+                    <StringItem index="18" value="Machineries"/>
+                    <StringItem index="19" value="Notes Payable"/>
+                    <StringItem index="20" value="Notes Receivable"/>
+                    <StringItem index="21" value="Prepaid Expenses"/>
+                    <StringItem index="22" value="Rent Expense"/>
+                    <StringItem index="23" value="Salaries Expense"/>
+                    <StringItem index="24" value="Sales"/>
+                    <StringItem index="25" value="Sales Returns and Sales Discount"/>
+                    <StringItem index="26" value="Service Revenue"/>
+                    <StringItem index="27" value="Supplies"/>
+                    <StringItem index="28" value="Supplies Expense"/>
+                    <StringItem index="29" value="Uncollectible Accounts Expense"/>
+                    <StringItem index="30" value="Unearned Revenues"/>
+                    <StringItem index="31" value="Utilities Expense"/>
+                    <StringItem index="32" value="Vehicles"/>
+                    <StringItem index="33" value="Withdrawals"/>
                   </StringArray>
                 </Property>
                 <Property name="selectedIndex" type="int" value="-1"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxDebit1ActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="cboxDebitActionPerformed"/>
               </Events>
               <AuxValues>
                 <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
