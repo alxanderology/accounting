@@ -231,7 +231,7 @@ public class BalanceSheet extends javax.swing.JFrame {
         jLabel13.setFont(new java.awt.Font("Neue Kaine", 0, 24)); // NOI18N
         jLabel13.setForeground(new java.awt.Color(51, 51, 51));
         jLabel13.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel13.setText("Date");
+        jLabel13.setText("As of year x");
         jPanel1.add(jLabel13, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 50, 1340, 40));
 
         jLabel10.setFont(new java.awt.Font("Neue Kaine", 3, 18)); // NOI18N

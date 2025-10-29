@@ -15,8 +15,9 @@ public class UnadjustedTB extends javax.swing.JFrame {
     /**
      * Creates new form UnadjustedTB
      */
-    public UnadjustedTB() {
+    public UnadjustedTB(MainMenu main) {
         initComponents();
+        this.mainmenu = main;
         model = (DefaultTableModel) jTable1.getModel();
     }
 

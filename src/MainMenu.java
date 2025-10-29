@@ -292,7 +292,7 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        UnadjustedTB utb = new UnadjustedTB();
+        UnadjustedTB utb = new UnadjustedTB(this);
         utb.load(ledger);
         utb.setVisible(true);
     }//GEN-LAST:event_jButton8ActionPerformed
