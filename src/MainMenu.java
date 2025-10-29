@@ -280,7 +280,15 @@ public class MainMenu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
+        if (ledger == null){
+            JOptionPane.showMessageDialog(this, "Please record transactions or open the General Ledger first.");
+            return;
+        }
+        
+        IncomeStatement is = new IncomeStatement(this, entityName);
+        is.loadData(ledger);
+        is.setVisible(true);
+        this.setVisible(false);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed

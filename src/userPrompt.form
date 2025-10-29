@@ -217,7 +217,7 @@
                   <Font name="Montserrat Medium" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="34">
+                  <StringArray count="35">
                     <StringItem index="0" value="Accumulated Depreciation"/>
                     <StringItem index="1" value="Accounts Payable"/>
                     <StringItem index="2" value="Accounts Receivable"/>
@@ -243,15 +243,16 @@
                     <StringItem index="22" value="Rent Expense"/>
                     <StringItem index="23" value="Salaries Expense"/>
                     <StringItem index="24" value="Sales"/>
-                    <StringItem index="25" value="Sales Returns and Sales Discount"/>
-                    <StringItem index="26" value="Service Revenue"/>
-                    <StringItem index="27" value="Supplies"/>
-                    <StringItem index="28" value="Supplies Expense"/>
-                    <StringItem index="29" value="Uncollectible Accounts Expense"/>
-                    <StringItem index="30" value="Unearned Revenues"/>
-                    <StringItem index="31" value="Utilities Expense"/>
-                    <StringItem index="32" value="Vehicles"/>
-                    <StringItem index="33" value="Withdrawals"/>
+                    <StringItem index="25" value="Sales Discount"/>
+                    <StringItem index="26" value="Sales Returns and Allowances"/>
+                    <StringItem index="27" value="Service Revenue"/>
+                    <StringItem index="28" value="Supplies"/>
+                    <StringItem index="29" value="Supplies Expense"/>
+                    <StringItem index="30" value="Uncollectible Accounts Expense"/>
+                    <StringItem index="31" value="Unearned Revenues"/>
+                    <StringItem index="32" value="Utilities Expense"/>
+                    <StringItem index="33" value="Vehicles"/>
+                    <StringItem index="34" value="Withdrawals"/>
                   </StringArray>
                 </Property>
                 <Property name="selectedIndex" type="int" value="-1"/>
@@ -341,7 +342,7 @@
                   <Font name="Montserrat Medium" size="18" style="0"/>
                 </Property>
                 <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-                  <StringArray count="34">
+                  <StringArray count="35">
                     <StringItem index="0" value="Accumulated Depreciation"/>
                     <StringItem index="1" value="Accounts Payable"/>
                     <StringItem index="2" value="Accounts Receivable"/>
@@ -367,15 +368,16 @@
                     <StringItem index="22" value="Rent Expense"/>
                     <StringItem index="23" value="Salaries Expense"/>
                     <StringItem index="24" value="Sales"/>
-                    <StringItem index="25" value="Sales Returns and Sales Discount"/>
-                    <StringItem index="26" value="Service Revenue"/>
-                    <StringItem index="27" value="Supplies"/>
-                    <StringItem index="28" value="Supplies Expense"/>
-                    <StringItem index="29" value="Uncollectible Accounts Expense"/>
-                    <StringItem index="30" value="Unearned Revenues"/>
-                    <StringItem index="31" value="Utilities Expense"/>
-                    <StringItem index="32" value="Vehicles"/>
-                    <StringItem index="33" value="Withdrawals"/>
+                    <StringItem index="25" value="Sales Discount"/>
+                    <StringItem index="26" value="Sales Returns and Allowances"/>
+                    <StringItem index="27" value="Service Revenue"/>
+                    <StringItem index="28" value="Supplies"/>
+                    <StringItem index="29" value="Supplies Expense"/>
+                    <StringItem index="30" value="Uncollectible Accounts Expense"/>
+                    <StringItem index="31" value="Unearned Revenues"/>
+                    <StringItem index="32" value="Utilities Expense"/>
+                    <StringItem index="33" value="Vehicles"/>
+                    <StringItem index="34" value="Withdrawals"/>
                   </StringArray>
                 </Property>
                 <Property name="selectedIndex" type="int" value="-1"/>

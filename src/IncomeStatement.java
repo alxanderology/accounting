@@ -2,7 +2,10 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
+import javax.swing.table.DefaultTableModel;
+import javax.swing.JTable;
+import java.util.List;
+import java.util.Arrays;
 /**
  *
  * @author julie
@@ -10,13 +13,143 @@
 public class IncomeStatement extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(IncomeStatement.class.getName());
-
+    private MainMenu mainmenu;
+    private String entityName;
+    
     /**
      * Creates new form IncomeStatement
      */
-    public IncomeStatement() {
+    public IncomeStatement(MainMenu main, String en) {
         initComponents();
+        this.mainmenu = main;
+        this.entityName = en;
+        jLabel20.setText(entityName);
     }
+    
+    public void loadData(Ledger ledger){
+        DefaultTableModel incomeModel = (DefaultTableModel) jTable10.getModel();
+        DefaultTableModel expensesModel = (DefaultTableModel) jTable11.getModel();
+        DefaultTableModel netIncomeModel = (DefaultTableModel) jTable12.getModel();
+        
+        List<String> salesRev = Arrays.asList("Sales", "Service Revenue");
+        List<String> costOfSalesAccounts = Arrays.asList("Cost of Goods Sold (COGS)", "Sales Returns and Allowances", "Sales Discount");
+        List<String> expenses = Arrays.asList("Advertisement Expense", "Depreciation Expense",
+        "Insurance Expense", "Interest Expense", "Rent Expense",
+        "Salaries Expense", "Supplies Expense", "Uncollectible Accounts Expense", "Utilities Expense");
+        
+        double tRevenue = 0.0;
+        double tCoS = 0.0;
+        double tExp = 0.0;
+        
+        DefaultTableModel ldgModel = ledger.getModel();
+        if (ldgModel == null){
+            return;
+        }
+        
+        for (int i = 0; i < ldgModel.getRowCount(); i++){
+            Object accObj = ldgModel.getValueAt(i, 0);
+            if (accObj == null){
+                continue;
+            }
+            
+            String account = accObj.toString().trim();
+            if (account.isEmpty()) continue;
+            
+            if (!salesRev.contains(account) && !costOfSalesAccounts.contains(account) && !expenses.contains(account)){
+                continue;
+            }
+            
+            double lastBal = 0.0;
+            int lastAccRow = i;
+            
+            for (int j = i+1; j < ldgModel.getRowCount(); j++){
+                Object nextAcc = ldgModel.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) {
+                    break;
+                }
+                Object balObj = ldgModel.getValueAt(j, 3);
+                if (balObj != null && !balObj.toString().trim().isEmpty()){
+                    try{
+                        lastBal = Double.parseDouble(balObj.toString());
+                    }
+                    catch (NumberFormatException e){
+                        
+                    }
+                }
+                lastAccRow = j;
+            }
+            
+            if (salesRev.contains(account)){
+                double salesRevAmount = Math.abs(lastBal);
+                incomeModel.addRow(new Object[]{account, String.format("%.2f", salesRevAmount)});
+                tRevenue += salesRevAmount;
+            }
+            else if (costOfSalesAccounts.contains(account)){
+                double costAmount = lastBal;
+                String displayAcc = "   (Less) " + account;
+                incomeModel.addRow(new Object[]{displayAcc, String.format("%.2f", costAmount)});
+                tCoS += costAmount;
+            }
+            else if (expenses.contains(account)){
+                double expensesAmount = lastBal;
+                expensesModel.addRow(new Object[]{account, String.format("%.2f", expensesAmount)});
+                tExp += expensesAmount;
+            }
+            
+            i = lastAccRow; 
+        }
+        double gross = tRevenue - tCoS;
+        incomeModel.addRow(new Object[]{"", ""}); 
+        incomeModel.addRow(new Object[]{"Gross Income", String.format("%.2f", gross)});
+        styleTotalRow(jTable10, incomeModel.getRowCount() - 1); 
+
+        
+        expensesModel.addRow(new Object[]{"", ""}); 
+        expensesModel.addRow(new Object[]{"Total Expenses", String.format("%.2f", tExp)});
+        styleTotalRow(jTable11, expensesModel.getRowCount() - 1); 
+
+        
+        double netIncome = gross - tExp;
+
+        String netIncomeLabel;
+        String netIncomeValue;
+
+        
+        if (netIncome >= 0) {
+            netIncomeLabel = "Net Income";
+            netIncomeValue = String.format("%.2f", netIncome);
+        } else {
+            netIncomeLabel = "Net Loss";
+            netIncomeValue = String.format("(%.2f)", Math.abs(netIncome));
+        }
+
+            netIncomeModel.addRow(new Object[]{netIncomeLabel, netIncomeValue});
+            styleTotalRow(jTable12, 0);
+
+        }
+    
+    private void styleTotalRow(JTable table, int rowIndex) {
+        table.setDefaultRenderer(Object.class, new javax.swing.table.DefaultTableCellRenderer() {
+            @Override
+            public java.awt.Component getTableCellRendererComponent(
+                    javax.swing.JTable table, Object value, boolean isSelected,
+                    boolean hasFocus, int row, int column) {
+
+                java.awt.Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+
+                if (row == rowIndex) {
+                    c.setFont(c.getFont().deriveFont(java.awt.Font.BOLD));
+                    c.setBackground(new java.awt.Color(230, 230, 230)); 
+                } else {
+                    c.setBackground(java.awt.Color.WHITE); 
+                }
+                return c;
+            }
+        });
+        
+        table.repaint();
+    }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -353,7 +486,7 @@ public class IncomeStatement extends javax.swing.JFrame {
         jLabel25.setFont(new java.awt.Font("Neue Kaine", 0, 24)); // NOI18N
         jLabel25.setForeground(new java.awt.Color(51, 51, 51));
         jLabel25.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel25.setText("For year ended");
+        jLabel25.setText("For year ended x");
         jPanel8.add(jLabel25, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 60, 1160, 30));
 
         jLabel20.setBackground(new java.awt.Color(245, 238, 230));
@@ -417,7 +550,7 @@ public class IncomeStatement extends javax.swing.JFrame {
         ));
         jScrollPane10.setViewportView(jTable10);
 
-        jPanel6.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 280, 640, 260));
+        jPanel6.add(jScrollPane10, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 280, 640, 150));
 
         jTable11.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jTable11.setModel(new javax.swing.table.DefaultTableModel(
@@ -430,7 +563,7 @@ public class IncomeStatement extends javax.swing.JFrame {
         ));
         jScrollPane11.setViewportView(jTable11);
 
-        jPanel6.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 610, 640, 260));
+        jPanel6.add(jScrollPane11, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 490, 640, 150));
 
         jTable12.setFont(new java.awt.Font("Montserrat", 0, 14)); // NOI18N
         jTable12.setModel(new javax.swing.table.DefaultTableModel(
@@ -443,13 +576,13 @@ public class IncomeStatement extends javax.swing.JFrame {
         ));
         jScrollPane12.setViewportView(jTable12);
 
-        jPanel6.add(jScrollPane12, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 940, 640, 120));
+        jPanel6.add(jScrollPane12, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 710, 640, 120));
 
         jLabel27.setFont(new java.awt.Font("Montserrat Black", 1, 36)); // NOI18N
         jLabel27.setForeground(new java.awt.Color(51, 51, 51));
         jLabel27.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel27.setText("Net Income");
-        jPanel6.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 870, 410, 70));
+        jPanel6.add(jLabel27, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 650, 250, 50));
 
         jPanel10.setBackground(new java.awt.Color(109, 148, 197));
 
@@ -495,13 +628,13 @@ public class IncomeStatement extends javax.swing.JFrame {
         jLabel30.setForeground(new java.awt.Color(51, 51, 51));
         jLabel30.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel30.setText("Income");
-        jPanel6.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 210, 320, 70));
+        jPanel6.add(jLabel30, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 220, 160, 40));
 
         jLabel31.setFont(new java.awt.Font("Montserrat Black", 1, 36)); // NOI18N
         jLabel31.setForeground(new java.awt.Color(51, 51, 51));
         jLabel31.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel31.setText("Expenses");
-        jPanel6.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 540, 350, 70));
+        jPanel6.add(jLabel31, new org.netbeans.lib.awtextra.AbsoluteConstraints(190, 430, 210, 50));
 
         getContentPane().add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 1340, 1090));
 
@@ -539,8 +672,7 @@ public class IncomeStatement extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new IncomeStatement().setVisible(true));
+       
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
