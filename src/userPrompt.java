@@ -284,14 +284,6 @@ public class userPrompt extends javax.swing.JFrame {
         }
         
         pJournal.recTransaction(debits, credits, amount);
-        if (ledger != null){
-            ledger.addTransaction(debits, amount, "");
-            ledger.addTransaction(credits, "", amount);            
-        }
-        else{
-          JOptionPane.showMessageDialog(this, "Ledger not loaded");  
-          return;
-        }
         
         
         JOptionPane.showMessageDialog(this, "Transaction successfully added to Journal.");

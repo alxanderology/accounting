@@ -14,16 +14,17 @@ public class Journal extends javax.swing.JFrame {
      */
     private DefaultTableModel journ;
     private MainMenu mainmenu;
-    
     private String entityName;
+    private Ledger ledgerInstance;
     
-    public Journal(MainMenu main, String en) {
-        initComponents();
-        journ = (DefaultTableModel) jTable2.getModel();
-        this.entityName = en;
-        mainmenu = main;
-        jLabel3.setText(en);
-    }
+    public Journal(MainMenu main, String en, Ledger ledger) {
+    initComponents();
+    journ = (javax.swing.table.DefaultTableModel) jTable2.getModel();
+    this.entityName = en;
+    this.mainmenu = main;
+    this.ledgerInstance = ledger;
+    jLabel3.setText(en);
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -44,6 +45,7 @@ public class Journal extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jButton1 = new javax.swing.JButton();
+        jButtonDelete = new javax.swing.JButton();
 
         jCheckBoxMenuItem1.setSelected(true);
         jCheckBoxMenuItem1.setText("jCheckBoxMenuItem1");
@@ -117,7 +119,18 @@ public class Journal extends javax.swing.JFrame {
                 jButton1ActionPerformed(evt);
             }
         });
-        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 20, 110, 30));
+        jPanel1.add(jButton1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 30, 110, 30));
+
+        jButtonDelete.setBackground(new java.awt.Color(255, 51, 51));
+        jButtonDelete.setFont(new java.awt.Font("Montserrat SemiBold", 0, 14)); // NOI18N
+        jButtonDelete.setForeground(new java.awt.Color(244, 237, 230));
+        jButtonDelete.setText("DELETE");
+        jButtonDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonDeleteActionPerformed(evt);
+            }
+        });
+        jPanel1.add(jButtonDelete, new org.netbeans.lib.awtextra.AbsoluteConstraints(1030, 590, 110, 30));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 1160, 720));
 
@@ -128,26 +141,36 @@ public class Journal extends javax.swing.JFrame {
        mainmenu.setVisible(true);
        this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
+        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+    int selectedRow = jTable2.getSelectedRow();
+
+    // Make sure a row is selected and there are enough rows to delete
+    if (selectedRow != -1 && selectedRow + 2 < model.getRowCount()) {
+        // Remove three rows: Debit, Credit, Separator
+        model.removeRow(selectedRow);     // Debit row
+        model.removeRow(selectedRow);     // Credit row (now at same index)
+        model.removeRow(selectedRow);     // Separator row (now at same index)
+    } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "Please select the first row (debit) of a transaction to delete.");
+    }
+    }//GEN-LAST:event_jButtonDeleteActionPerformed
     
     public void recTransaction(String debit, String credit, String amt){
-        Object[] debitRow = {
-            debit,
-            amt,
-            ""
-        };
-        journ.addRow(debitRow);
-        
-        Object[] creditRow = {
-            "   " + credit,
-            "",
-            amt
-        };
-        journ.addRow(creditRow);
-        
-        Object[] spaceLangSiya = {};
-        journ.addRow(spaceLangSiya);
-        
+    Object[] debitRow = { debit, amt, "" };
+    journ.addRow(debitRow);
+
+    Object[] creditRow = { "   " + credit, "", amt };
+    journ.addRow(creditRow);
+
+    journ.addRow(new Object[]{});
+
+    // ✅ Post to Ledger too
+    if (ledgerInstance != null) {
+        ledgerInstance.postTransaction(debit, credit, amt);
     }
+}
     /**
      * @param args the command line arguments
      */
@@ -181,6 +204,7 @@ public class Journal extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButtonDelete;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;

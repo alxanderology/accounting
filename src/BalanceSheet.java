@@ -7,16 +7,146 @@
  *
  * @author julie
  */
+import javax.swing.table.DefaultTableModel;
+import java.util.List;
+import java.util.Arrays;
 public class BalanceSheet extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(BalanceSheet.class.getName());
-
+    private String entityName;
+    private MainMenu mainmenu;
+    private double netIncome;
     /**
      * Creates new form BalanceSheet
      */
-    public BalanceSheet() {
+    private Ledger ledgerInstance;
+
+    public BalanceSheet(String entityName, MainMenu mainmenu, Ledger ledgerInstance) {
         initComponents();
+    this.entityName = entityName;
+    this.mainmenu = mainmenu;
+    this.ledgerInstance = ledgerInstance;
+
+    jLabel6.setText("Balance Sheet for " + entityName);
+    loadTrialBalanceData(); // Will load actual UTB data
     }
+  
+    private void loadTrialBalanceData() {
+    try {
+        DefaultTableModel currentAssets = (DefaultTableModel) jTable4.getModel();
+        DefaultTableModel nonCurrentAssets = (DefaultTableModel) jTable6.getModel();
+        DefaultTableModel otherAssets = (DefaultTableModel) jTable7.getModel();
+        DefaultTableModel currentLiabilities = (DefaultTableModel) jTable5.getModel();
+        DefaultTableModel equity = (DefaultTableModel) jTable2.getModel();
+        DefaultTableModel otherLiabilities = (DefaultTableModel) jTable3.getModel();
+
+        currentAssets.setRowCount(0);
+        nonCurrentAssets.setRowCount(0);
+        otherAssets.setRowCount(0);
+        currentLiabilities.setRowCount(0);
+        equity.setRowCount(0);
+        otherLiabilities.setRowCount(0);
+
+        DefaultTableModel ldgModel = ledgerInstance.getModel();
+        if (ldgModel == null) return;
+
+        List<String> currentAssetNames = Arrays.asList("Cash", "Accounts Receivable", "Inventories", "Supplies", "Notes Receivable", "Prepaid Expenses");
+        List<String> nonCurrentAssetNames = Arrays.asList("Equipment", "Land", "Building", "Machineries", "Vehicles", "Furnitures & Fixtures");
+        List<String> otherAssetNames = Arrays.asList("Bonds Receivable", "Other Assets", "Miscellaneous");
+        List<String> currentLiabilityNames = Arrays.asList("Accounts Payable", "Notes Payable", "Unearned Revenues");
+        List<String> otherLiabilityNames = Arrays.asList("Bonds Payable", "Accrued Expenses");
+        List<String> equityNames = Arrays.asList("Owner’s Capital", "Capital/Equity");
+        List<String> withdrawalNames = Arrays.asList("Withdrawals");
+        List<String> revenueNames = Arrays.asList("Service Revenue", "Sales Revenue", "Interest Revenue", "Other Revenue");
+        List<String> expenseNames = Arrays.asList("Rent Expense", "Supplies Expense", "Salaries Expense", "Utilities Expense", "Miscellaneous Expense");
+
+        double ownerCapital = 0.0;
+        double withdrawals = 0.0;
+        double netIncomeValue = 0.0;
+        boolean hasEquity = false;
+        boolean hasNetIncome = false;
+
+        // For each account header, find only the final balance row under it!
+        for (int i = 0; i < ldgModel.getRowCount(); i++) {
+            Object accObj = ldgModel.getValueAt(i, 0);
+            if (accObj == null) continue;
+            String account = accObj.toString().trim();
+            if (account.isEmpty()) continue;
+
+            // Find the last row for this account
+            double finalBalance = 0.0;
+            int lastAccRow = i;
+            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
+                Object nextAcc = ldgModel.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
+                Object balObj = ldgModel.getValueAt(j, 3);
+                if (balObj != null && !balObj.toString().trim().isEmpty()) {
+                    try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
+                }
+                lastAccRow = j;
+            }
+
+            // Only add once per account
+            boolean alreadyAdded = false;
+            for (int row = 0; row < currentAssets.getRowCount(); row++) {
+                if (currentAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            for (int row = 0; row < nonCurrentAssets.getRowCount(); row++) {
+                if (nonCurrentAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            for (int row = 0; row < otherAssets.getRowCount(); row++) {
+                if (otherAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            for (int row = 0; row < currentLiabilities.getRowCount(); row++) {
+                if (currentLiabilities.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            for (int row = 0; row < otherLiabilities.getRowCount(); row++) {
+                if (otherLiabilities.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            for (int row = 0; row < equity.getRowCount(); row++) {
+                if (equity.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            }
+            if (alreadyAdded) continue;
+
+            String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
+
+            if (currentAssetNames.contains(account)) {
+                currentAssets.addRow(new Object[]{account, displayAmount});
+            } else if (nonCurrentAssetNames.contains(account)) {
+                nonCurrentAssets.addRow(new Object[]{account, displayAmount});
+            } else if (otherAssetNames.contains(account)) {
+                otherAssets.addRow(new Object[]{account, displayAmount});
+            } else if (currentLiabilityNames.contains(account)) {
+                currentLiabilities.addRow(new Object[]{account, displayAmount});
+            } else if (otherLiabilityNames.contains(account)) {
+                otherLiabilities.addRow(new Object[]{account, displayAmount});
+            } else if (equityNames.contains(account)) {
+                equity.addRow(new Object[]{account, displayAmount});
+                ownerCapital += finalBalance;
+                hasEquity = true;
+            } else if (withdrawalNames.contains(account)) {
+                withdrawals += Math.abs(finalBalance); // always positive when subtracting!
+                equity.addRow(new Object[]{account, String.format("₱%.2f", Math.abs(finalBalance))});
+                hasEquity = true;
+            } else if (account.equals("Net Income")) {
+                netIncomeValue = finalBalance;
+                equity.addRow(new Object[]{"Net Income", displayAmount});
+                hasNetIncome = true;
+                hasEquity = true;
+            }
+            i = lastAccRow; // move to next account header
+        }
+
+        if (hasEquity) {
+            double totalEquity = ownerCapital + netIncomeValue - withdrawals;
+            equity.addRow(new Object[]{"TOTAL EQUITY", String.format("₱%.2f", totalEquity)});
+        }
+
+        System.out.println("Trial Balance data loaded into Balance Sheet!");
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -27,6 +157,7 @@ public class BalanceSheet extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
         jPanel2 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
@@ -299,17 +430,19 @@ public class BalanceSheet extends javax.swing.JFrame {
 
         jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 1340, 1030));
 
+        jScrollPane1.setViewportView(jPanel2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 1340, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 723, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 389, Short.MAX_VALUE))
         );
 
         pack();
@@ -323,27 +456,7 @@ public class BalanceSheet extends javax.swing.JFrame {
     /**
      * @param args the command line arguments
      */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ReflectiveOperationException | javax.swing.UnsupportedLookAndFeelException ex) {
-            logger.log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
 
-        /* Create and display the form */
-        java.awt.EventQueue.invokeLater(() -> new BalanceSheet().setVisible(true));
-    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
@@ -366,6 +479,7 @@ public class BalanceSheet extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;

@@ -10,8 +10,9 @@ import javax.swing.*;
 public class MainMenu extends javax.swing.JFrame {
     
     private String entityName;
-    private Journal journal;
-    private Ledger ledger;
+    private Ledger ledgerInstance;
+    private Journal journalInstance;
+
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(MainMenu.class.getName());
 
@@ -40,8 +41,6 @@ public class MainMenu extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jButton2 = new javax.swing.JButton();
-        jButton4 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
         jButton6 = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
@@ -73,14 +72,6 @@ public class MainMenu extends javax.swing.JFrame {
                 jButton2ActionPerformed(evt);
             }
         });
-
-        jButton4.setFont(new java.awt.Font("Montserrat ExtraBold", 0, 18)); // NOI18N
-        jButton4.setText("Record Adjustments");
-        jButton4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jButton5.setFont(new java.awt.Font("Montserrat ExtraBold", 0, 18)); // NOI18N
-        jButton5.setText("Adjusted Trial Balance");
-        jButton5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jButton6.setFont(new java.awt.Font("Montserrat ExtraBold", 0, 18)); // NOI18N
         jButton6.setText("Financial Position");
@@ -135,19 +126,15 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGap(47, 47, 47)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
                         .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
                         .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addComponent(jLabel1)
-                        .addGroup(jPanel3Layout.createSequentialGroup()
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(18, 18, 18)
-                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel3Layout.createSequentialGroup()
                             .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 347, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(18, 18, 18)
@@ -167,15 +154,11 @@ public class MainMenu extends javax.swing.JFrame {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
+                .addGap(27, 27, 27)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(193, Short.MAX_VALUE))
+                .addContainerGap(242, Short.MAX_VALUE))
         );
 
         jLabel2.setBackground(new java.awt.Color(244, 237, 230));
@@ -270,53 +253,68 @@ public class MainMenu extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        if (ledger == null) ledger = new Ledger(entityName, this);
-        ledger.setVisible(true);
-        this.setVisible(false);
+        if (ledgerInstance == null) {
+        ledgerInstance = new Ledger(entityName, this);
+    }
+    ledgerInstance.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        // TODO add your handling code here:
+        
+        if (ledgerInstance == null) {
+            
+        JOptionPane.showMessageDialog(this, "Please open the General Journal first!");
+        return;
+    }
+    BalanceSheet bs = new BalanceSheet(entityName, this, ledgerInstance);
+    bs.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        if (ledger == null){
-            JOptionPane.showMessageDialog(this, "Please record transactions or open the General Ledger first.");
-            return;
-        }
-        
-        IncomeStatement is = new IncomeStatement(this, entityName);
-        is.loadData(ledger);
-        is.setVisible(true);
-        this.setVisible(false);
+        if (ledgerInstance == null || ledgerInstance.getModel().getRowCount() == 0) {
+        JOptionPane.showMessageDialog(this, "Please record transactions or open the General Journal first.");
+        return;
+    }
+    IncomeStatement is = new IncomeStatement(this, entityName);
+    is.loadData(ledgerInstance);
+    is.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        UnadjustedTB utb = new UnadjustedTB(this);
-        utb.load(ledger);
-        utb.setVisible(true);
+        if (ledgerInstance == null) {
+        JOptionPane.showMessageDialog(this, "Please open the General Journal first!");
+        return;
+    }
+    UnadjustedTB utb = new UnadjustedTB(entityName, this, ledgerInstance);
+    utb.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        if (journal == null) {
-            JOptionPane.showMessageDialog(this, "Please open the General Journal first.");
-            return;
-        }
-        
-        if (ledger == null){
-            ledger = new Ledger(entityName, this);
-        }
-        
-        userPrompt up = new userPrompt(entityName, journal, this, ledger);
-        up.setVisible(true);
+            if (journalInstance == null) {
+        JOptionPane.showMessageDialog(this, "Please open the General Journal first.");
+        return;
+    }
+    if (ledgerInstance == null) {
+        ledgerInstance = new Ledger(entityName, this);
+    }
+    userPrompt up = new userPrompt(entityName, journalInstance, this, ledgerInstance);
+    up.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        if (journal == null) {
-            journal = new Journal(this, entityName);
-        }
-        journal.setVisible(true);
-        this.setVisible(false);
+            if (ledgerInstance == null) {
+        ledgerInstance = new Ledger(entityName, this);
+    }
+    if (journalInstance == null) {
+        journalInstance = new Journal(this, entityName, ledgerInstance);
+    }
+    journalInstance.setVisible(true);
+    this.setVisible(false);
     }//GEN-LAST:event_jButton9ActionPerformed
 
      
@@ -353,8 +351,6 @@ public class MainMenu extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;

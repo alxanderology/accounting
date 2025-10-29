@@ -4,6 +4,11 @@
  */
 import javax.swing.table.DefaultTableModel;
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  
  * @author LOQ
@@ -14,6 +19,7 @@ public class Ledger extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(Ledger.class.getName());
     private MainMenu mainmenu;
     private String entityName;
+    
     /**
      * Creates new form Ledger
      */
@@ -29,76 +35,122 @@ public class Ledger extends javax.swing.JFrame {
         ));
         model = (DefaultTableModel) tblLedger.getModel();
     }
+    private final List<String> transactionHistory = new ArrayList<>();
     
+    public void postTransaction(String debitAccount, String creditAccount, String amount) {
+    DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
+    double amt;
+    try {
+        amt = Double.parseDouble(amount);
+    } catch (NumberFormatException e) {
+        JOptionPane.showMessageDialog(this, "Invalid amount entered.");
+        return;
+    }
+    addLedgerEntry(debitAccount, amt, 0.0);  // Debit side
+    addLedgerEntry(creditAccount, 0.0, amt); // Credit side
+}
 
-    public void addTransaction(String part, String debit, String credit){
-        double dt = 0.0;
-        double ct = 0.0;
+private void addLedgerEntry(String account, double debit, double credit) {
+    DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
+    int headerRow = -1;
 
+    // Check if account header already exists
+    for (int i = 0; i < model.getRowCount(); i++) {
+        Object acc = model.getValueAt(i, 0);
+        if (acc != null && acc.toString().equalsIgnoreCase(account)) {
+            headerRow = i;
+            break;
+        }
+    }
+
+    // If not found, create header and first transaction row
+    if (headerRow == -1) {
+        double balance = debit - credit;
+        model.addRow(new Object[]{account, "", "", ""});
+        model.addRow(new Object[]{"", debit, credit, balance});
+        return;
+    }
+
+    // Otherwise, find last row under this header
+    int lastRow = headerRow;
+    for (int i = headerRow + 1; i < model.getRowCount(); i++) {
+        Object nextAcc = model.getValueAt(i, 0);
+        if (nextAcc != null && !nextAcc.toString().isEmpty()) break;
+        lastRow = i;
+    }
+
+    // Get last balance
+    double prevBal = 0.0;
+    Object balObj = model.getValueAt(lastRow, 3);
+    if (balObj != null && !balObj.toString().isEmpty()) {
         try {
-            if (debit != null && !debit.trim().isEmpty()) {
-                dt = Double.parseDouble(debit);
-            }
-            if (credit != null && !credit.trim().isEmpty()) {
-                ct = Double.parseDouble(credit);
-            }
-        } catch (NumberFormatException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, 
-                "Invalid number format for debit or credit");
-            return;
-        }
-        
-        
-        int check = -1;
-        for (int i = 0; i < model.getRowCount(); i++) {
-            Object value = model.getValueAt(i, 0);
-            if (value != null && value.toString().equalsIgnoreCase(part)) {
-                check = i;
-                break;
-            }
-        }
+            prevBal = Double.parseDouble(balObj.toString());
+        } catch (Exception ignored) {}
+    }
 
-        double balance = 0.0;
+    double newBalance = prevBal + (debit - credit);
 
-        
-        if (check == -1) {
-            model.addRow(new Object[]{part, "", "", ""});
-            check = model.getRowCount() - 1;
-            balance = dt - ct;
-            model.addRow(new Object[]{"", dt, ct, balance});
-        } else {
-            int lastRow = check;
+    // Add new entry row only once (no header duplication)
+    model.insertRow(lastRow + 1, new Object[]{"", debit, credit, newBalance});
+}
+// Helper function to add or update ledger row for an account
+        private void addOrUpdateAccountRow(String account, double debit, double credit) {
+            DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
+            int headerRow = -1;
 
-       
-            for (int i = check + 1; i < model.getRowCount(); i++) {
+            // 1️⃣ Find if the account already exists
+            for (int i = 0; i < model.getRowCount(); i++) {
+                Object acc = model.getValueAt(i, 0);
+                if (acc != null && acc.toString().equalsIgnoreCase(account)) {
+                    headerRow = i;
+                    break;
+                }
+            }
+
+            // 2️⃣ If not found, create new account header + first row
+            if (headerRow == -1) {
+                double balance = debit - credit;
+                model.addRow(new Object[]{account, "", "", ""});       // header
+                model.addRow(new Object[]{"", debit, credit, balance}); // first entry
+                return;
+            }
+
+            // 3️⃣ If found, find the last row for this account
+            int lastRow = headerRow;
+            for (int i = headerRow + 1; i < model.getRowCount(); i++) {
                 Object nextAcc = model.getValueAt(i, 0);
                 if (nextAcc != null && !nextAcc.toString().isEmpty()) break;
                 lastRow = i;
             }
 
-            
+            // 4️⃣ Get the previous balance
+            double prevBal = 0.0;
             Object balObj = model.getValueAt(lastRow, 3);
             if (balObj != null && !balObj.toString().isEmpty()) {
                 try {
-                    balance = Double.parseDouble(balObj.toString());
-                } catch (NumberFormatException e) {
-                    balance = 0.0;
-                }
-            } else {
-                balance = 0.0;
+                    prevBal = Double.parseDouble(balObj.toString());
+                } catch (NumberFormatException ignored) {}
             }
 
-            
-            balance += (dt - ct);
-
-            
-            model.insertRow(lastRow + 1, new Object[]{"", dt, ct, balance});
-
-            
-            
+            // 5️⃣ Compute and insert new row
+            double newBalance = prevBal + (debit - credit);
+            model.insertRow(lastRow + 1, new Object[]{"", debit, credit, newBalance});
         }
-       
+
+        public List<String[]> getSummarizedLedgerData() {
+            List<String[]> summarizedData = new ArrayList<>();
+            DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String account = String.valueOf(model.getValueAt(i, 0));
+                String debit = String.valueOf(model.getValueAt(i, 1));
+                String credit = String.valueOf(model.getValueAt(i, 2));
+                summarizedData.add(new String[]{account, debit, credit});
+        }
+        return summarizedData;
     }
+    
+    
     
     private int findLastRowOfAccount(String account) {
         int lastRow = -1;

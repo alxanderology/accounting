@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 import javax.swing.table.DefaultTableModel;
+import java.util.List;
 /**
  *
  * @author Wes
@@ -10,16 +11,55 @@ import javax.swing.table.DefaultTableModel;
 public class UnadjustedTB extends javax.swing.JFrame {
     private MainMenu mainmenu;
     private DefaultTableModel model;
-    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UnadjustedTB.class.getName());
+    private String entityName;
+    private Ledger ledgerInstance;
 
+    private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(UnadjustedTB.class.getName());
+    
     /**
      * Creates new form UnadjustedTB
      */
-    public UnadjustedTB(MainMenu main) {
-        initComponents();
-        this.mainmenu = main;
-        model = (DefaultTableModel) jTable1.getModel();
+    public UnadjustedTB(String entityName, MainMenu mainmenu, Ledger ledgerInstance) {
+    initComponents();
+    this.entityName = entityName;
+    this.mainmenu = mainmenu;
+    this.ledgerInstance = ledgerInstance;
+    jTextField1.setText(entityName); // Show entity name
+    loadLedgerToUTB();
+}
+    
+    private void loadLedgerToUTB() {
+    DefaultTableModel utbModel = (DefaultTableModel) jTable1.getModel();
+    utbModel.setRowCount(0); // clear
+
+    List<String[]> summarized = ledgerInstance.getSummarizedLedgerData();
+
+    double totalDebit = 0;
+    double totalCredit = 0;
+
+    for (String[] row : summarized) {
+        String account = row[0];
+        double debit = 0.0, credit = 0.0;
+        if (row[1] != null && !row[1].trim().isEmpty()) {
+            try { debit = Double.parseDouble(row[1].trim()); } catch (NumberFormatException e) {}
+        }
+        if (row[2] != null && !row[2].trim().isEmpty()) {
+            try { credit = Double.parseDouble(row[2].trim()); } catch (NumberFormatException e) {}
+        }
+        utbModel.addRow(new Object[]{account, debit == 0 ? "" : debit, credit == 0 ? "" : credit});
+        totalDebit += debit;
+        totalCredit += credit;
     }
+
+    // Add blank row for separation (optional)
+    utbModel.addRow(new Object[]{"", "", ""});
+    // Add the TOTAL row
+    utbModel.addRow(new Object[]{
+        "TOTAL",
+        String.format("%.2f", totalDebit),
+        String.format("%.2f", totalCredit)
+    });
+}
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -91,17 +131,17 @@ public class UnadjustedTB extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(379, 379, 379)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(494, 494, 494)
                         .addComponent(jLabel2))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(27, 27, 27)
                         .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(74, 74, 74)
-                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(227, Short.MAX_VALUE))
+                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 791, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(226, 226, 226)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 787, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(216, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -116,8 +156,8 @@ public class UnadjustedTB extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(32, 32, 32)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 202, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 569, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 60, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(109, 148, 197));
