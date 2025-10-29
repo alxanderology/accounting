@@ -49,7 +49,59 @@ public class Ledger extends javax.swing.JFrame {
     addLedgerEntry(debitAccount, amt, 0.0);  // Debit side
     addLedgerEntry(creditAccount, 0.0, amt); // Credit side
 }
-
+    public void deleteTransaction(String debitAccount, String creditAccount, String amount) {
+    DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
+    double amt;
+    try { amt = Double.parseDouble(amount); } catch (NumberFormatException e) { return; }
+    removeLedgerEntry(model, debitAccount, amt, 0.0);
+    removeAccountHeaderIfEmpty(model, debitAccount);
+    removeLedgerEntry(model, creditAccount, 0.0, amt);
+    removeAccountHeaderIfEmpty(model, creditAccount);
+}
+    private void removeAccountHeaderIfEmpty(DefaultTableModel model, String account) {
+    for (int i = 0; i < model.getRowCount(); i++) {
+        Object acc = model.getValueAt(i, 0);
+        if (acc != null && acc.toString().equalsIgnoreCase(account)) {
+            boolean hasRows = false;
+            for (int j = i + 1; j < model.getRowCount(); j++) {
+                Object nextAcc = model.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().isEmpty()) break;
+                // Found at least one transaction row
+                hasRows = true;
+                break;
+            }
+            if (!hasRows) {
+                model.removeRow(i);
+            }
+            break;
+        }
+    }
+}
+    
+private void removeLedgerEntry(DefaultTableModel model, String account, double debit, double credit) {
+    // Find account header
+    for (int i = 0; i < model.getRowCount(); i++) {
+        Object acc = model.getValueAt(i, 0);
+        if (acc != null && acc.toString().equalsIgnoreCase(account)) {
+            // Look for matching transaction row under header
+            for (int j = i + 1; j < model.getRowCount(); j++) {
+                Object nextAcc = model.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().isEmpty()) break;
+                Object debitObj = model.getValueAt(j, 1);
+                Object creditObj = model.getValueAt(j, 2);
+                if ((debitObj != null && !debitObj.toString().isEmpty() && Double.parseDouble(debitObj.toString()) == debit) &&
+                    (creditObj != null && !creditObj.toString().isEmpty() && Double.parseDouble(creditObj.toString()) == credit)) {
+                    model.removeRow(j);
+                    // You may want to update balances for later rows here!
+                    break;
+                }
+            }
+            break;
+        }
+    }
+}
+    
+    
 private void addLedgerEntry(String account, double debit, double credit) {
     DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
     int headerRow = -1;

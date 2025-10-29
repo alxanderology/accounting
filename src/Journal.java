@@ -143,15 +143,24 @@ public class Journal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButtonDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonDeleteActionPerformed
-        DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
+         DefaultTableModel model = (DefaultTableModel) jTable2.getModel();
     int selectedRow = jTable2.getSelectedRow();
 
-    // Make sure a row is selected and there are enough rows to delete
     if (selectedRow != -1 && selectedRow + 2 < model.getRowCount()) {
-        // Remove three rows: Debit, Credit, Separator
+        String debitAccount = model.getValueAt(selectedRow, 0).toString();
+        String amount = model.getValueAt(selectedRow, 1).toString();
+        String creditAccount = model.getValueAt(selectedRow + 1, 0).toString().trim();
+        if (creditAccount.startsWith("   ")) creditAccount = creditAccount.substring(3);
+
+        // Remove from Journal
         model.removeRow(selectedRow);     // Debit row
-        model.removeRow(selectedRow);     // Credit row (now at same index)
-        model.removeRow(selectedRow);     // Separator row (now at same index)
+        model.removeRow(selectedRow);     // Credit row
+        model.removeRow(selectedRow);     // Separator row
+
+        // Remove from Ledger
+        if (ledgerInstance != null) {
+            ledgerInstance.deleteTransaction(debitAccount, creditAccount, amount);
+        }
     } else {
         javax.swing.JOptionPane.showMessageDialog(this, "Please select the first row (debit) of a transaction to delete.");
     }
@@ -171,6 +180,7 @@ public class Journal extends javax.swing.JFrame {
         ledgerInstance.postTransaction(debit, credit, amt);
     }
 }
+    
     /**
      * @param args the command line arguments
      */
