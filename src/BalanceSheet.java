@@ -103,10 +103,10 @@ public class BalanceSheet extends javax.swing.JFrame {
             double finalBalance = getFinalBalance(ldgModel, account);
 
             if (revenueAccounts.contains(account)) {
-                netIncomeValue += finalBalance;
+                netIncomeValue += Math.abs(finalBalance);
             }
             if (expenseAccounts.contains(account)) {
-                netIncomeValue -= finalBalance;
+                netIncomeValue -= Math.abs(finalBalance);
             }
         }
 
