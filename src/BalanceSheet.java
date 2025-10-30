@@ -31,7 +31,26 @@ public class BalanceSheet extends javax.swing.JFrame {
     loadTrialBalanceData(); // Will load actual UTB data
     }
   
-    private void loadTrialBalanceData() {
+    private double getFinalBalance(DefaultTableModel ldgModel, String account) {
+    for (int i = 0; i < ldgModel.getRowCount(); i++) {
+        Object accObj = ldgModel.getValueAt(i, 0);
+        if (accObj != null && accObj.toString().trim().equalsIgnoreCase(account)) {
+            double finalBalance = 0.0;
+            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
+                Object nextAcc = ldgModel.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
+                Object balObj = ldgModel.getValueAt(j, 3);
+                if (balObj != null && !balObj.toString().trim().isEmpty()) {
+                    try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
+                }
+            }
+            return finalBalance;
+        }
+    }
+    return 0.0;
+}
+
+        private void loadTrialBalanceData() {
     try {
         DefaultTableModel currentAssets = (DefaultTableModel) jTable4.getModel();
         DefaultTableModel nonCurrentAssets = (DefaultTableModel) jTable6.getModel();
@@ -57,92 +76,144 @@ public class BalanceSheet extends javax.swing.JFrame {
         List<String> otherLiabilityNames = Arrays.asList("Bonds Payable", "Accrued Expenses");
         List<String> equityNames = Arrays.asList("Owner’s Capital", "Capital/Equity");
         List<String> withdrawalNames = Arrays.asList("Withdrawals");
-        List<String> revenueNames = Arrays.asList("Service Revenue", "Sales Revenue", "Interest Revenue", "Other Revenue");
-        List<String> expenseNames = Arrays.asList("Rent Expense", "Supplies Expense", "Salaries Expense", "Utilities Expense", "Miscellaneous Expense");
 
+        // Use the same revenue and expense account lists as in your Income Statement
+        List<String> revenueAccounts = Arrays.asList("Sales", "Service Revenue");
+        List<String> expenseAccounts = Arrays.asList(
+            "Rent Expense", "Supplies Expense", "Salaries Expense", "Utilities Expense", "Miscellaneous Expense"
+            // Add any other expense accounts you use here!
+        );
+
+        double totalCurrentAssets = 0;
+        double totalNonCurrentAssets = 0;
+        double totalOtherAssets = 0;
+        double totalCurrentLiabilities = 0;
+        double totalOtherLiabilities = 0;
         double ownerCapital = 0.0;
         double withdrawals = 0.0;
         double netIncomeValue = 0.0;
-        boolean hasEquity = false;
-        boolean hasNetIncome = false;
 
-        // For each account header, find only the final balance row under it!
+        // Compute Net Income/Net Loss directly from ledger
         for (int i = 0; i < ldgModel.getRowCount(); i++) {
             Object accObj = ldgModel.getValueAt(i, 0);
             if (accObj == null) continue;
             String account = accObj.toString().trim();
             if (account.isEmpty()) continue;
 
-            // Find the last row for this account
-            double finalBalance = 0.0;
-            int lastAccRow = i;
-            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
-                Object nextAcc = ldgModel.getValueAt(j, 0);
-                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
-                Object balObj = ldgModel.getValueAt(j, 3);
-                if (balObj != null && !balObj.toString().trim().isEmpty()) {
-                    try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
-                }
-                lastAccRow = j;
-            }
+            double finalBalance = getFinalBalance(ldgModel, account);
 
-            // Only add once per account
-            boolean alreadyAdded = false;
-            for (int row = 0; row < currentAssets.getRowCount(); row++) {
-                if (currentAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            if (revenueAccounts.contains(account)) {
+                netIncomeValue += finalBalance;
             }
-            for (int row = 0; row < nonCurrentAssets.getRowCount(); row++) {
-                if (nonCurrentAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
+            if (expenseAccounts.contains(account)) {
+                netIncomeValue -= Math.abs(finalBalance);
             }
-            for (int row = 0; row < otherAssets.getRowCount(); row++) {
-                if (otherAssets.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
-            }
-            for (int row = 0; row < currentLiabilities.getRowCount(); row++) {
-                if (currentLiabilities.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
-            }
-            for (int row = 0; row < otherLiabilities.getRowCount(); row++) {
-                if (otherLiabilities.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
-            }
-            for (int row = 0; row < equity.getRowCount(); row++) {
-                if (equity.getValueAt(row, 0).equals(account)) { alreadyAdded = true; break; }
-            }
-            if (alreadyAdded) continue;
+        }
 
-            String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
-
-            if (currentAssetNames.contains(account)) {
+        // Current Assets
+        for (String account : currentAssetNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 currentAssets.addRow(new Object[]{account, displayAmount});
-            } else if (nonCurrentAssetNames.contains(account)) {
+                totalCurrentAssets += Math.abs(finalBalance);
+            }
+        }
+        if (totalCurrentAssets != 0.0) {
+            currentAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalCurrentAssets)});
+        }
+
+        // Non-Current Assets
+        for (String account : nonCurrentAssetNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 nonCurrentAssets.addRow(new Object[]{account, displayAmount});
-            } else if (otherAssetNames.contains(account)) {
+                totalNonCurrentAssets += Math.abs(finalBalance);
+            }
+        }
+        if (totalNonCurrentAssets != 0.0) {
+            nonCurrentAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalNonCurrentAssets)});
+        }
+
+        // Other Assets
+        for (String account : otherAssetNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 otherAssets.addRow(new Object[]{account, displayAmount});
-            } else if (currentLiabilityNames.contains(account)) {
+                totalOtherAssets += Math.abs(finalBalance);
+            }
+        }
+        if (totalOtherAssets != 0.0) {
+            otherAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalOtherAssets)});
+        }
+
+        // Current Liabilities
+        for (String account : currentLiabilityNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 currentLiabilities.addRow(new Object[]{account, displayAmount});
-            } else if (otherLiabilityNames.contains(account)) {
+                totalCurrentLiabilities += Math.abs(finalBalance);
+            }
+        }
+        if (totalCurrentLiabilities != 0.0) {
+            currentLiabilities.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalCurrentLiabilities)});
+        }
+
+        // Other Liabilities
+        for (String account : otherLiabilityNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 otherLiabilities.addRow(new Object[]{account, displayAmount});
-            } else if (equityNames.contains(account)) {
+                totalOtherLiabilities += Math.abs(finalBalance);
+            }
+        }
+        if (totalOtherLiabilities != 0.0) {
+            otherLiabilities.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalOtherLiabilities)});
+        }
+
+        // Equity (Owner's Capital, Withdrawals, Net Income)
+        for (String account : equityNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
                 equity.addRow(new Object[]{account, displayAmount});
                 ownerCapital += finalBalance;
-                hasEquity = true;
-            } else if (withdrawalNames.contains(account)) {
-                withdrawals += Math.abs(finalBalance); // always positive when subtracting!
-                equity.addRow(new Object[]{account, String.format("₱%.2f", Math.abs(finalBalance))});
-                hasEquity = true;
-            } else if (account.equals("Net Income")) {
-                netIncomeValue = finalBalance;
-                equity.addRow(new Object[]{"Net Income", displayAmount});
-                hasNetIncome = true;
-                hasEquity = true;
             }
-            i = lastAccRow; // move to next account header
+        }
+        for (String account : withdrawalNames) {
+            double finalBalance = getFinalBalance(ldgModel, account);
+            if (finalBalance != 0.0) {
+                String displayAmount = String.format("₱%.2f", Math.abs(finalBalance));
+                equity.addRow(new Object[]{account, displayAmount});
+                withdrawals += Math.abs(finalBalance);
+            }
         }
 
-        if (hasEquity) {
-            double totalEquity = ownerCapital + netIncomeValue - withdrawals;
-            equity.addRow(new Object[]{"TOTAL EQUITY", String.format("₱%.2f", Math.abs(totalEquity))});
-        }
+        equity.addRow(new Object[]{"Capital/Equity", String.format("₱%.2f", Math.abs(ownerCapital))});
+        equity.addRow(new Object[]{"Withdrawals", String.format("₱%.2f", Math.abs(withdrawals))});
 
-        System.out.println("Trial Balance data loaded into Balance Sheet!");
+    // Show Net Income or Net Loss (from your computation)
+    if (netIncomeValue != 0.0) {
+    String netLabel = netIncomeValue >= 0 ? "Net Income" : "Net Loss";
+    equity.addRow(new Object[]{netLabel, String.format("₱%.2f", Math.abs(netIncomeValue))});
+}
+
+// Calculate TOTAL EQUITY
+double totalEquity;
+if (netIncomeValue >= 0) {
+    // Net Income: add, Withdrawals: subtract
+    totalEquity = ownerCapital - withdrawals + netIncomeValue;
+} else {
+    // Net Loss: subtract as positive, Withdrawals: subtract
+    totalEquity = ownerCapital - withdrawals - Math.abs(netIncomeValue);
+}
+equity.addRow(new Object[]{"TOTAL EQUITY", String.format("₱%.2f", totalEquity)});
+
+        System.out.println("Balance Sheet data loaded with Net Income/Loss included in Equity.");
     } catch (Exception e) {
         e.printStackTrace();
     }
@@ -409,7 +480,7 @@ public class BalanceSheet extends javax.swing.JFrame {
         ));
         jScrollPane7.setViewportView(jTable7);
 
-        jPanel1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 880, 300, 120));
+        jPanel1.add(jScrollPane7, new org.netbeans.lib.awtextra.AbsoluteConstraints(980, 570, 320, 120));
 
         jLabel14.setFont(new java.awt.Font("Neue Kaine", 1, 18)); // NOI18N
         jLabel14.setForeground(new java.awt.Color(51, 51, 51));
@@ -440,7 +511,7 @@ public class BalanceSheet extends javax.swing.JFrame {
         jLabel16.setForeground(new java.awt.Color(51, 51, 51));
         jLabel16.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel16.setText("Other assets");
-        jPanel1.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 830, 150, 50));
+        jPanel1.add(jLabel16, new org.netbeans.lib.awtextra.AbsoluteConstraints(940, 520, 150, 50));
 
         jPanel2.add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 80, 1340, 1030));
 

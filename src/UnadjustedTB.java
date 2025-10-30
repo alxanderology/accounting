@@ -28,37 +28,68 @@ public class UnadjustedTB extends javax.swing.JFrame {
         loadLedgerToUTB();
     }
     
+    private double getFinalBalance(DefaultTableModel ldgModel, String account) {
+    for (int i = 0; i < ldgModel.getRowCount(); i++) {
+        Object accObj = ldgModel.getValueAt(i, 0);
+        if (accObj != null && accObj.toString().trim().equalsIgnoreCase(account)) {
+            double finalBalance = 0.0;
+            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
+                Object nextAcc = ldgModel.getValueAt(j, 0);
+                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
+                Object balObj = ldgModel.getValueAt(j, 3);
+                if (balObj != null && !balObj.toString().trim().isEmpty()) {
+                    try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
+                }
+            }
+            return finalBalance;
+        }
+    }
+    return 0.0;
+}
+    
     private void loadLedgerToUTB() {
-        DefaultTableModel utbModel = (DefaultTableModel) jTable1.getModel();
-        utbModel.setRowCount(0);
+    DefaultTableModel utbModel = (DefaultTableModel) jTable1.getModel();
+    utbModel.setRowCount(0);
 
-        List<String[]> summarized = ledgerInstance.getSummarizedLedgerData();
+    DefaultTableModel ldgModel = ledgerInstance.getModel();
+    if (ldgModel == null) return;
 
-        double totalDebit = 0;
-        double totalCredit = 0;
+    double totalDebit = 0;
+    double totalCredit = 0;
 
-        for (String[] row : summarized) {
-            String account = row[0];
-            double debit = 0.0, credit = 0.0;
-            if (row[1] != null && !row[1].trim().isEmpty()) {
-                try { debit = Double.parseDouble(row[1].trim()); } catch (NumberFormatException e) {}
-            }
-            if (row[2] != null && !row[2].trim().isEmpty()) {
-                try { credit = Double.parseDouble(row[2].trim()); } catch (NumberFormatException e) {}
-            }
-            utbModel.addRow(new Object[]{account, debit == 0 ? "" : debit, credit == 0 ? "" : credit});
-            totalDebit += debit;
-            totalCredit += credit;
+    // Loop all account headers in ledger
+    for (int i = 0; i < ldgModel.getRowCount(); i++) {
+        Object accObj = ldgModel.getValueAt(i, 0);
+        if (accObj == null) continue;
+        String account = accObj.toString().trim();
+        if (account.isEmpty()) continue;
+
+        // Only add header rows
+        double finalBalance = getFinalBalance(ldgModel, account);
+
+        double debit = 0.0, credit = 0.0;
+        if (finalBalance > 0) {
+            debit = finalBalance;
+        } else if (finalBalance < 0) {
+            credit = Math.abs(finalBalance);
         }
 
-        // Add blank row for separation (optional)
-        utbModel.addRow(new Object[]{"", "", ""});
-        // Add the TOTAL row
-        utbModel.addRow(new Object[]{
-            "TOTAL",
-            String.format("%.2f", totalDebit),
-            String.format("%.2f", totalCredit)
-        });
+        Object debitValue = debit == 0.0 ? "" : debit;
+        Object creditValue = credit == 0.0 ? "" : credit;
+
+        utbModel.addRow(new Object[]{account, debitValue, creditValue});
+        totalDebit += debit;
+        totalCredit += credit;
+    }
+
+    // Add blank row for separation
+    utbModel.addRow(new Object[]{"", "", ""});
+    // Add the TOTAL row
+    utbModel.addRow(new Object[]{
+        "TOTAL",
+        String.format("%.2f", totalDebit),
+        String.format("%.2f", totalCredit)
+    });
     }
 
     /**
