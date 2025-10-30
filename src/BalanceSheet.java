@@ -32,23 +32,23 @@ public class BalanceSheet extends javax.swing.JFrame {
     }
   
     private double getFinalBalance(DefaultTableModel ldgModel, String account) {
-    for (int i = 0; i < ldgModel.getRowCount(); i++) {
-        Object accObj = ldgModel.getValueAt(i, 0);
-        if (accObj != null && accObj.toString().trim().equalsIgnoreCase(account)) {
-            double finalBalance = 0.0;
-            for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
-                Object nextAcc = ldgModel.getValueAt(j, 0);
-                if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
-                Object balObj = ldgModel.getValueAt(j, 3);
-                if (balObj != null && !balObj.toString().trim().isEmpty()) {
-                    try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
+        for (int i = 0; i < ldgModel.getRowCount(); i++) {
+            Object accObj = ldgModel.getValueAt(i, 0);
+            if (accObj != null && accObj.toString().trim().equalsIgnoreCase(account)) {
+                double finalBalance = 0.0;
+                for (int j = i + 1; j < ldgModel.getRowCount(); j++) {
+                    Object nextAcc = ldgModel.getValueAt(j, 0);
+                    if (nextAcc != null && !nextAcc.toString().trim().isEmpty()) break;
+                    Object balObj = ldgModel.getValueAt(j, 3);
+                    if (balObj != null && !balObj.toString().trim().isEmpty()) {
+                        try { finalBalance = Double.parseDouble(balObj.toString()); } catch (NumberFormatException e) {}
+                    }
                 }
+                return finalBalance;
             }
-            return finalBalance;
         }
+        return 0.0;
     }
-    return 0.0;
-}
 
         private void loadTrialBalanceData() {
     try {
@@ -106,7 +106,7 @@ public class BalanceSheet extends javax.swing.JFrame {
                 netIncomeValue += finalBalance;
             }
             if (expenseAccounts.contains(account)) {
-                netIncomeValue -= Math.abs(finalBalance);
+                netIncomeValue -= finalBalance;
             }
         }
 
@@ -193,30 +193,31 @@ public class BalanceSheet extends javax.swing.JFrame {
             }
         }
 
-        equity.addRow(new Object[]{"Capital/Equity", String.format("₱%.2f", Math.abs(ownerCapital))});
-        equity.addRow(new Object[]{"Withdrawals", String.format("₱%.2f", Math.abs(withdrawals))});
+        
+        
 
     // Show Net Income or Net Loss (from your computation)
     if (netIncomeValue != 0.0) {
-    String netLabel = netIncomeValue >= 0 ? "Net Income" : "Net Loss";
-    equity.addRow(new Object[]{netLabel, String.format("₱%.2f", Math.abs(netIncomeValue))});
-}
+        String netLabel = "Net Income/Loss";
+        equity.addRow(new Object[]{netLabel, String.format("₱%.2f", Math.abs(netIncomeValue))});
+    }
 
 // Calculate TOTAL EQUITY
-double totalEquity;
-if (netIncomeValue >= 0) {
-    // Net Income: add, Withdrawals: subtract
-    totalEquity = ownerCapital - withdrawals + netIncomeValue;
-} else {
-    // Net Loss: subtract as positive, Withdrawals: subtract
-    totalEquity = ownerCapital - withdrawals - Math.abs(netIncomeValue);
-}
-equity.addRow(new Object[]{"TOTAL EQUITY", String.format("₱%.2f", totalEquity)});
-
-        System.out.println("Balance Sheet data loaded with Net Income/Loss included in Equity.");
-    } catch (Exception e) {
-        e.printStackTrace();
+    double totalEquity;
+    if (netIncomeValue >= 0){
+        totalEquity = ownerCapital + (Math.abs(withdrawals)*(-1)) + netIncomeValue;
     }
+    else{
+        totalEquity = ownerCapital - (Math.abs(withdrawals)*(-1)) + (netIncomeValue * (-1));
+    }
+    
+
+    equity.addRow(new Object[]{"TOTAL EQUITY", String.format("₱%.2f", Math.abs(totalEquity))});
+
+            System.out.println("Balance Sheet data loaded with Net Income/Loss included in Equity.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 }
 
     /**
