@@ -142,15 +142,15 @@ private void addLedgerEntry(String account, double debit, double credit) {
 
     double newBalance = prevBal + (debit - credit);
 
-    // Add new entry row only once (no header duplication)
+    
     model.insertRow(lastRow + 1, new Object[]{"", debit, credit, newBalance});
 }
-// Helper function to add or update ledger row for an account
+
         private void addOrUpdateAccountRow(String account, double debit, double credit) {
             DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
             int headerRow = -1;
 
-            // 1️⃣ Find if the account already exists
+            
             for (int i = 0; i < model.getRowCount(); i++) {
                 Object acc = model.getValueAt(i, 0);
                 if (acc != null && acc.toString().equalsIgnoreCase(account)) {
@@ -159,15 +159,14 @@ private void addLedgerEntry(String account, double debit, double credit) {
                 }
             }
 
-            // 2️⃣ If not found, create new account header + first row
+            
             if (headerRow == -1) {
                 double balance = debit - credit;
-                model.addRow(new Object[]{account, "", "", ""});       // header
-                model.addRow(new Object[]{"", debit, credit, balance}); // first entry
+                model.addRow(new Object[]{account, "", "", ""});      
+                model.addRow(new Object[]{"", debit, credit, balance}); 
                 return;
             }
 
-            // 3️⃣ If found, find the last row for this account
             int lastRow = headerRow;
             for (int i = headerRow + 1; i < model.getRowCount(); i++) {
                 Object nextAcc = model.getValueAt(i, 0);
@@ -175,7 +174,7 @@ private void addLedgerEntry(String account, double debit, double credit) {
                 lastRow = i;
             }
 
-            // 4️⃣ Get the previous balance
+            
             double prevBal = 0.0;
             Object balObj = model.getValueAt(lastRow, 3);
             if (balObj != null && !balObj.toString().isEmpty()) {
@@ -184,7 +183,7 @@ private void addLedgerEntry(String account, double debit, double credit) {
                 } catch (NumberFormatException ignored) {}
             }
 
-            // 5️⃣ Compute and insert new row
+            
             double newBalance = prevBal + (debit - credit);
             model.insertRow(lastRow + 1, new Object[]{"", debit, credit, newBalance});
         }

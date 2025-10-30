@@ -20,46 +20,46 @@ public class UnadjustedTB extends javax.swing.JFrame {
      * Creates new form UnadjustedTB
      */
     public UnadjustedTB(String entityName, MainMenu mainmenu, Ledger ledgerInstance) {
-    initComponents();
-    this.entityName = entityName;
-    this.mainmenu = mainmenu;
-    this.ledgerInstance = ledgerInstance;
-    jTextField1.setText(entityName); // Show entity name
-    loadLedgerToUTB();
-}
+        initComponents();
+        this.entityName = entityName;
+        this.mainmenu = mainmenu;
+        this.ledgerInstance = ledgerInstance;
+        jTextField1.setText(entityName); 
+        loadLedgerToUTB();
+    }
     
     private void loadLedgerToUTB() {
-    DefaultTableModel utbModel = (DefaultTableModel) jTable1.getModel();
-    utbModel.setRowCount(0); // clear
+        DefaultTableModel utbModel = (DefaultTableModel) jTable1.getModel();
+        utbModel.setRowCount(0);
 
-    List<String[]> summarized = ledgerInstance.getSummarizedLedgerData();
+        List<String[]> summarized = ledgerInstance.getSummarizedLedgerData();
 
-    double totalDebit = 0;
-    double totalCredit = 0;
+        double totalDebit = 0;
+        double totalCredit = 0;
 
-    for (String[] row : summarized) {
-        String account = row[0];
-        double debit = 0.0, credit = 0.0;
-        if (row[1] != null && !row[1].trim().isEmpty()) {
-            try { debit = Double.parseDouble(row[1].trim()); } catch (NumberFormatException e) {}
+        for (String[] row : summarized) {
+            String account = row[0];
+            double debit = 0.0, credit = 0.0;
+            if (row[1] != null && !row[1].trim().isEmpty()) {
+                try { debit = Double.parseDouble(row[1].trim()); } catch (NumberFormatException e) {}
+            }
+            if (row[2] != null && !row[2].trim().isEmpty()) {
+                try { credit = Double.parseDouble(row[2].trim()); } catch (NumberFormatException e) {}
+            }
+            utbModel.addRow(new Object[]{account, debit == 0 ? "" : debit, credit == 0 ? "" : credit});
+            totalDebit += debit;
+            totalCredit += credit;
         }
-        if (row[2] != null && !row[2].trim().isEmpty()) {
-            try { credit = Double.parseDouble(row[2].trim()); } catch (NumberFormatException e) {}
-        }
-        utbModel.addRow(new Object[]{account, debit == 0 ? "" : debit, credit == 0 ? "" : credit});
-        totalDebit += debit;
-        totalCredit += credit;
+
+        // Add blank row for separation (optional)
+        utbModel.addRow(new Object[]{"", "", ""});
+        // Add the TOTAL row
+        utbModel.addRow(new Object[]{
+            "TOTAL",
+            String.format("%.2f", totalDebit),
+            String.format("%.2f", totalCredit)
+        });
     }
-
-    // Add blank row for separation (optional)
-    utbModel.addRow(new Object[]{"", "", ""});
-    // Add the TOTAL row
-    utbModel.addRow(new Object[]{
-        "TOTAL",
-        String.format("%.2f", totalDebit),
-        String.format("%.2f", totalCredit)
-    });
-}
 
     /**
      * This method is called from within the constructor to initialize the form.
