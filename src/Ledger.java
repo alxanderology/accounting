@@ -92,7 +92,7 @@ private void removeLedgerEntry(DefaultTableModel model, String account, double d
                 if ((debitObj != null && !debitObj.toString().isEmpty() && Double.parseDouble(debitObj.toString()) == debit) &&
                     (creditObj != null && !creditObj.toString().isEmpty() && Double.parseDouble(creditObj.toString()) == credit)) {
                     model.removeRow(j);
-                    // You may want to update balances for later rows here!
+                    
                     break;
                 }
             }
@@ -106,7 +106,6 @@ private void addLedgerEntry(String account, double debit, double credit) {
     DefaultTableModel model = (DefaultTableModel) tblLedger.getModel();
     int headerRow = -1;
 
-    // Check if account header already exists
     for (int i = 0; i < model.getRowCount(); i++) {
         Object acc = model.getValueAt(i, 0);
         if (acc != null && acc.toString().equalsIgnoreCase(account)) {
@@ -115,7 +114,7 @@ private void addLedgerEntry(String account, double debit, double credit) {
         }
     }
 
-    // If not found, create header and first transaction row
+    
     if (headerRow == -1) {
         double balance = debit - credit;
         model.addRow(new Object[]{account, "", "", ""});
@@ -123,7 +122,7 @@ private void addLedgerEntry(String account, double debit, double credit) {
         return;
     }
 
-    // Otherwise, find last row under this header
+    
     int lastRow = headerRow;
     for (int i = headerRow + 1; i < model.getRowCount(); i++) {
         Object nextAcc = model.getValueAt(i, 0);
@@ -131,7 +130,7 @@ private void addLedgerEntry(String account, double debit, double credit) {
         lastRow = i;
     }
 
-    // Get last balance
+  
     double prevBal = 0.0;
     Object balObj = model.getValueAt(lastRow, 3);
     if (balObj != null && !balObj.toString().isEmpty()) {

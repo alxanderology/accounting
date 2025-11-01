@@ -152,12 +152,12 @@ public class Journal extends javax.swing.JFrame {
         String creditAccount = model.getValueAt(selectedRow + 1, 0).toString().trim();
         if (creditAccount.startsWith("   ")) creditAccount = creditAccount.substring(3);
 
-        // Remove from Journal
+       
         model.removeRow(selectedRow);     // Debit row
         model.removeRow(selectedRow);     // Credit row
         model.removeRow(selectedRow);     // Separator row
 
-        // Remove from Ledger
+       
         if (ledgerInstance != null) {
             ledgerInstance.deleteTransaction(debitAccount, creditAccount, amount);
         }
@@ -175,7 +175,7 @@ public class Journal extends javax.swing.JFrame {
 
     journ.addRow(new Object[]{});
 
-    // ✅ Post to Ledger too
+    
     if (ledgerInstance != null) {
         ledgerInstance.postTransaction(debit, credit, amt);
     }

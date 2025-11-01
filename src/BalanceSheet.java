@@ -28,7 +28,7 @@ public class BalanceSheet extends javax.swing.JFrame {
     this.ledgerInstance = ledgerInstance;
 
     jLabel6.setText("Balance Sheet for " + entityName);
-    loadTrialBalanceData(); // Will load actual UTB data
+    loadTrialBalanceData(); 
     }
   
     private double getFinalBalance(DefaultTableModel ldgModel, String account) {
@@ -77,11 +77,11 @@ public class BalanceSheet extends javax.swing.JFrame {
         List<String> equityNames = Arrays.asList("Owner’s Capital", "Capital/Equity");
         List<String> withdrawalNames = Arrays.asList("Withdrawals");
 
-        // Use the same revenue and expense account lists as in your Income Statement
+        
         List<String> revenueAccounts = Arrays.asList("Sales", "Service Revenue");
         List<String> expenseAccounts = Arrays.asList(
             "Rent Expense", "Supplies Expense", "Salaries Expense", "Utilities Expense", "Miscellaneous Expense"
-            // Add any other expense accounts you use here!
+            
         );
 
         double totalCurrentAssets = 0;
@@ -93,7 +93,7 @@ public class BalanceSheet extends javax.swing.JFrame {
         double withdrawals = 0.0;
         double netIncomeValue = 0.0;
 
-        // Compute Net Income/Net Loss directly from ledger
+        
         for (int i = 0; i < ldgModel.getRowCount(); i++) {
             Object accObj = ldgModel.getValueAt(i, 0);
             if (accObj == null) continue;
@@ -110,7 +110,7 @@ public class BalanceSheet extends javax.swing.JFrame {
             }
         }
 
-        // Current Assets
+      
         for (String account : currentAssetNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -123,7 +123,6 @@ public class BalanceSheet extends javax.swing.JFrame {
             currentAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalCurrentAssets)});
         }
 
-        // Non-Current Assets
         for (String account : nonCurrentAssetNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -136,7 +135,7 @@ public class BalanceSheet extends javax.swing.JFrame {
             nonCurrentAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalNonCurrentAssets)});
         }
 
-        // Other Assets
+        
         for (String account : otherAssetNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -149,7 +148,7 @@ public class BalanceSheet extends javax.swing.JFrame {
             otherAssets.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalOtherAssets)});
         }
 
-        // Current Liabilities
+       
         for (String account : currentLiabilityNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -162,7 +161,7 @@ public class BalanceSheet extends javax.swing.JFrame {
             currentLiabilities.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalCurrentLiabilities)});
         }
 
-        // Other Liabilities
+      
         for (String account : otherLiabilityNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -175,7 +174,7 @@ public class BalanceSheet extends javax.swing.JFrame {
             otherLiabilities.addRow(new Object[]{"TOTAL", String.format("₱%.2f", totalOtherLiabilities)});
         }
 
-        // Equity (Owner's Capital, Withdrawals, Net Income)
+        
         for (String account : equityNames) {
             double finalBalance = getFinalBalance(ldgModel, account);
             if (finalBalance != 0.0) {
@@ -196,13 +195,13 @@ public class BalanceSheet extends javax.swing.JFrame {
         
         
 
-    // Show Net Income or Net Loss (from your computation)
+   
     if (netIncomeValue != 0.0) {
         String netLabel = "Net Income/Loss";
         equity.addRow(new Object[]{netLabel, String.format("₱%.2f", Math.abs(netIncomeValue))});
     }
 
-// Calculate TOTAL EQUITY
+
     double totalEquity;
     if (netIncomeValue >= 0){
         totalEquity = ownerCapital + (Math.abs(withdrawals)*(-1)) + netIncomeValue;
